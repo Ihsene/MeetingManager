@@ -1,0 +1,134 @@
+{
+  "project_info": {
+    "project_number": "251985880134",
+    "project_id": "firebase-meetingmanager"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:251985880134:android:9cd5da8ef93f923c",
+        "android_client_info": {
+          "package_name": "be.ac.umons"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "251985880134-s50kcnrr15ci8cvpeiuo4jhfir2sjrq3.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "251985880134-82fdrkm6b7blqjqv2nrc1ff0jjcgmr5p.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "be.ac.umons",
+            "certificate_hash": "5551c309ae6df63eea4e9d6d447c90f73d2d4566"
+          }
+        },
+        {
+          "client_id": "251985880134-ama43svkq45qk4qku62cs36v3lqt65qf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "be.ac.umons",
+            "certificate_hash": "b578fc40a789eeec5ca026648e1ca829f60edf87"
+          }
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCBYRzNb4dr6aRdflQr3Ne2y4UpOR20BUI"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:251985880134:android:ed00b367f6a7ac76",
+        "android_client_info": {
+          "package_name": "com.example.umons"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "251985880134-s50kcnrr15ci8cvpeiuo4jhfir2sjrq3.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "251985880134-17cot08jrc48jjgh3eqfvrl5m762qo7r.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.umons",
+            "certificate_hash": "b578fc40a789eeec5ca026648e1ca829f60edf87"
+          }
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCBYRzNb4dr6aRdflQr3Ne2y4UpOR20BUI"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:251985880134:android:b80e01ab38f6838e",
+        "android_client_info": {
+          "package_name": "be.ac.umons.meetingmanager"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "251985880134-kg18o7btn1ocss58qnbqafrokqkb866o.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "be.ac.umons.meetingmanager",
+            "certificate_hash": "5551c309ae6df63eea4e9d6d447c90f73d2d4566"
+          }
+        },
+        {
+          "client_id": "251985880134-s50kcnrr15ci8cvpeiuo4jhfir2sjrq3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCBYRzNb4dr6aRdflQr3Ne2y4UpOR20BUI"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
