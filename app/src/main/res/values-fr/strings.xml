@@ -3,4 +3,9 @@
     <string name="app_name">MeetingManager</string>
     <string name="action_settings">Options</string>
     <string name="error_login">Impossible de se connecter</string>
+    <string name="conn_error">Problème avec le compte</string>
+    <string name="server_reachability">Problème avec le serveur</string>
+    <string name="buttonJoin">Rejoindre une réunion</string>
+    <string name="buttonCreate">Créer une réunion</string>
+    <string name="buttonLogout">Se déconnecter</string>
 </resources>

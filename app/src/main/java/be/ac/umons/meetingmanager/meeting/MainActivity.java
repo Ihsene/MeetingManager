@@ -11,16 +11,24 @@ import android.widget.Toast;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.gson.Gson;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
 
 import be.ac.umons.meetingmanager.R;
 import be.ac.umons.meetingmanager.connection.User;
-import be.ac.umons.meetingmanager.connection.RegisterRequest;
 import be.ac.umons.meetingmanager.connection.VolleyConnection;
+
+import static android.provider.ContactsContract.CommonDataKinds.Website.URL;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private static final int RC_SIGN_IN = 1234;
@@ -59,33 +67,45 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void handleSignInResult(GoogleSignInResult result) {
-        Log.d(TAG, "handleSignInResult:" + result.isSuccess());
         if (result.isSuccess()) {
-            onSucessLogin(result);
+            try {
+                onSucessLogin(result);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         } else {
+            pd.dismiss();
             Toast.makeText(MainActivity.this, R.string.error_login, Toast.LENGTH_LONG).show();
         }
-        pd.dismiss();
     }
 
-    private void onSucessLogin(GoogleSignInResult result) {
-        GoogleSignInAccount acct = result.getSignInAccount();
+    private void onSucessLogin(GoogleSignInResult result) throws JSONException {
+        final GoogleSignInAccount acct = result.getSignInAccount();
         User user = new User(acct.getGivenName(), acct.getFamilyName(), acct.getEmail(), acct.getId(), acct.getIdToken());
-
-        RegisterRequest registerRequest = new RegisterRequest(user, Request.Method.POST, (String) getText(R.string.login_url),
-                new Response.Listener<String>() {
+        JsonObjectRequest req = new JsonObjectRequest(Request.Method.POST,(String) getText(R.string.login_url), new JSONObject(new Gson().toJson(user)),
+                new Response.Listener<JSONObject>() {
                     @Override
-                    public void onResponse(String response) {
-                        startMenuActivity();
+                    public void onResponse(JSONObject response) {
+                        try {
+                            if(acct.getIdToken().equals(response.getString("token"))) {
+                                startMenuActivity();
+                                finish();
+                            }
+                            else
+                                Toast.makeText(MainActivity.this, R.string.conn_error, Toast.LENGTH_LONG).show();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        pd.dismiss();
                     }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(MainActivity.this, R.string.server_reachability, Toast.LENGTH_LONG).show();
-                    }
-                });
-        VolleyConnection.getInstance(getApplicationContext()).addToRequestQueue(registerRequest);
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(MainActivity.this, R.string.server_reachability, Toast.LENGTH_LONG).show();
+                pd.dismiss();
+            }
+        });
+        VolleyConnection.getInstance(getApplicationContext()).addToRequestQueue(req);
     }
     private void startMenuActivity() {
         Intent intent = new Intent(this, MenuActivity.class);
