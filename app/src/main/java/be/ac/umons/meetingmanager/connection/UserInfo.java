@@ -4,14 +4,14 @@ package be.ac.umons.meetingmanager.connection;
  * Created by SogeP on 27-07-17.
  */
 
-public class User {
+public class UserInfo {
     private String name;
     private String familyName;
     private String email;
-    private String id;
-    private String token;
+    private static String id;
+    private static String token;
 
-    public User(String name, String familyName, String email, String id, String token) {
+    public UserInfo(String name, String familyName, String email, String id, String token) {
         this.setName(name);
         this.setFamilyName(familyName);
         this.setEmail(email);

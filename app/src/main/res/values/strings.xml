@@ -13,7 +13,7 @@
     <string name="login_url">http://sith-meetings.umons.ac.be:8080/login</string>
     <string name="conn_error">problem with account</string>
     <string name="buttonJoin">Join a meeting</string>
-    <string name="buttonCreate">Create a meeting</string>
+    <string name="buttonCreate">Create/Modify a meeting</string>
     <string name="buttonOption">Options</string>
     <string name="buttonLogout">Logout</string>
 </resources>

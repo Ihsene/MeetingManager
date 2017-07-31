@@ -6,6 +6,6 @@
     <string name="conn_error">Problème avec le compte</string>
     <string name="server_reachability">Problème avec le serveur</string>
     <string name="buttonJoin">Rejoindre une réunion</string>
-    <string name="buttonCreate">Créer une réunion</string>
+    <string name="buttonCreate">Créer/Modifier une réunion</string>
     <string name="buttonLogout">Se déconnecter</string>
 </resources>
