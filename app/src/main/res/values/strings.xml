@@ -17,4 +17,16 @@
     <string name="buttonOption">Options</string>
     <string name="buttonLogout">Logout</string>
     <string name="title_activity_meeting_manager">MeetingManagerActivity</string>
+    <string name="nameMeeting">Name</string>
+    <string name="locationMeeting">Location</string>
+    <string name="buttonSetDateAndTime">Set Date</string>
+    <string name="buttonAddParticipant">Add/Remove Participants</string>
+    <string name="dateAndTimeText">00-00-00 / 00:00</string>
+    <string name="buttonSave">Save</string>
+    <string name="buttonReturn">Go Back</string>
+    <string name="connexion">Connexion...</string>
+    <string name="friendList">Select your participants</string>
+    <string name="setting">setting</string>
+    <string name="accountID">account</string>
+    <string name="accountToken">accountToken</string>
 </resources>

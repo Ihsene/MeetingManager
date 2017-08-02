@@ -11,8 +11,11 @@ public class Meeting {
     private int masterID;
     private String title, place;
     private Date date;
-    private
     private ArrayList<Subject> subjects;
+
+    public Meeting() {
+
+    }
 
     public Meeting(int masterID, String title, String place, Date date, ArrayList<Subject> subjects) {
         this.masterID = masterID;

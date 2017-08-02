@@ -1,9 +1,11 @@
-package be.ac.umons.meetingmanager.meeting.activities;
+package be.ac.umons.meetingmanager;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -22,13 +24,15 @@ import com.google.gson.GsonBuilder;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import be.ac.umons.meetingmanager.R;
+import java.util.Set;
+
 import be.ac.umons.meetingmanager.connection.UserInfo;
 import be.ac.umons.meetingmanager.connection.VolleyConnection;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private static final int RC_SIGN_IN = 1234;
     private static final String TAG = "MM";
+    private SharedPreferences sharedPreferences;
 
     private GoogleApiClient googleApiClient;
     private ProgressDialog pd;
@@ -38,6 +42,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        sharedPreferences = getSharedPreferences(getString(R.string.setting), this.MODE_PRIVATE);
+        if(!sharedPreferences.getString(getString(R.string.accountID),"").equals(""))
+            startMenuActivity(null);
+
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.server_client_id))
                 .requestEmail().build();
@@ -46,6 +54,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         findViewById(R.id.sign_in_button).setOnClickListener(this);
         pd = new ProgressDialog(this, ProgressDialog.STYLE_SPINNER);
+        pd.setMessage(getString(R.string.connexion));
     }
 
     private void signIn() {
@@ -77,7 +86,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void onSucessLogin(GoogleSignInResult result) throws JSONException {
         final GoogleSignInAccount acct = result.getSignInAccount();
-        UserInfo user = new UserInfo(acct.getGivenName(), acct.getFamilyName(), acct.getEmail(), acct.getId(), acct.getIdToken());
+        final UserInfo user = new UserInfo(acct.getGivenName(), acct.getFamilyName(), acct.getEmail(), acct.getId(), acct.getIdToken());
         Gson gson  = new GsonBuilder().excludeFieldsWithModifiers(java.lang.reflect.Modifier.TRANSIENT).create();
         JsonObjectRequest req = new JsonObjectRequest(Request.Method.POST,(String) getText(R.string.login_url), new JSONObject(gson.toJson(user)),
                 new Response.Listener<JSONObject>() {
@@ -85,8 +94,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     public void onResponse(JSONObject response) {
                         try {
                             if(acct.getIdToken().equals(response.getString("token"))) {
-                                startMenuActivity();
-                                finish();
+                                startMenuActivity(user);
                             }
                             else
                                 Toast.makeText(MainActivity.this, R.string.conn_error, Toast.LENGTH_LONG).show();
@@ -104,9 +112,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
         VolleyConnection.getInstance(getApplicationContext()).addToRequestQueue(req);
     }
-    private void startMenuActivity() {
+    private void startMenuActivity(UserInfo user) {
+        if(user != null)
+        {
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString(getString(R.string.accountID), user.getId());
+            editor.putString(getString(R.string.accountToken), user.getToken());
+            editor.commit();
+        }
         Intent intent = new Intent(this, MenuActivity.class);
         startActivity(intent);
+        finish();
     }
 
     @Override

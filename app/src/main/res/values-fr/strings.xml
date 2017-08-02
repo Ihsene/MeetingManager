@@ -8,4 +8,11 @@
     <string name="buttonJoin">Rejoindre une réunion</string>
     <string name="buttonCreate">Créer/Modifier une réunion</string>
     <string name="buttonLogout">Se déconnecter</string>
+    <string name="nameMeeting">Nom</string>
+    <string name="locationMeeting">Lieu</string>
+    <string name="buttonSetDateAndTime">Ajouter date</string>
+    <string name="buttonAddParticipant">Ajouter/Supprimer des participants</string>
+    <string name="buttonSave">Sauvegarder</string>
+    <string name="buttonReturn">Retour</string>
+    <string name="friendList">Selectionner vos participants</string>
 </resources>

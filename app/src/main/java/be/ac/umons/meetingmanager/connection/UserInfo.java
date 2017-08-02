@@ -1,5 +1,8 @@
 package be.ac.umons.meetingmanager.connection;
 
+import java.util.Arrays;
+import java.util.Set;
+
 /**
  * Created by SogeP on 27-07-17.
  */
@@ -8,8 +11,9 @@ public class UserInfo {
     private String name;
     private String familyName;
     private String email;
-    private static String id;
-    private static String token;
+    private String id;
+    private String token;
+    private int value;
 
     public UserInfo(String name, String familyName, String email, String id, String token) {
         this.setName(name);
@@ -57,5 +61,13 @@ public class UserInfo {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public int getValue() {
+        return value;
+    }
+
+    public void setValue(int value) {
+        this.value = value;
     }
 }
