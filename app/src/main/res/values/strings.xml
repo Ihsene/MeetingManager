@@ -16,4 +16,5 @@
     <string name="buttonCreate">Create/Modify a meeting</string>
     <string name="buttonOption">Options</string>
     <string name="buttonLogout">Logout</string>
+    <string name="title_activity_meeting_manager">MeetingManagerActivity</string>
 </resources>

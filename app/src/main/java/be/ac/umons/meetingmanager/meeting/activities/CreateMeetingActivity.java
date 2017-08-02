@@ -1,15 +1,15 @@
-package be.ac.umons.meetingmanager.meeting;
+package be.ac.umons.meetingmanager.meeting.activities;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import be.ac.umons.meetingmanager.R;
 
-public class MenuActivity extends AppCompatActivity {
+public class CreateMeetingActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_menu);
+        setContentView(R.layout.activity_create_meeting);
     }
 }

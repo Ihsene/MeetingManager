@@ -1,4 +1,4 @@
-package be.ac.umons.meetingmanager.meeting;
+package be.ac.umons.meetingmanager.meeting.activities;
 
 import android.app.ProgressDialog;
 import android.content.Intent;

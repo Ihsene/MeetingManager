@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="be.ac.umons.meetingmanager.meeting.MenuActivity">
+    tools:context="be.ac.umons.meetingmanager.meeting.activities.MenuActivity">
 
     <ImageView
         android:id="@+id/imageView"
@@ -29,6 +29,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginTop="30dp"
+        android:onClick="actionMenu"
         android:text="@string/buttonCreate"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -44,6 +45,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginTop="30dp"
+        android:onClick="actionMenu"
         android:text="@string/buttonOption"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -59,6 +61,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginTop="30dp"
+        android:onClick="actionMenu"
         android:text="@string/buttonLogout"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -74,6 +77,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginTop="30dp"
+        android:onClick="actionMenu"
         android:text="@string/buttonJoin"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
