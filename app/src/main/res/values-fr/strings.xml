@@ -15,4 +15,17 @@
     <string name="buttonSave">Sauvegarder</string>
     <string name="buttonReturn">Retour</string>
     <string name="friendList">Selectionner vos participants</string>
+    <string name="buttonAddSubjets">Ajouter des sujets</string>
+    <string name="account">Compte</string>
+    <string name="firstName">Prénom</string>
+    <string name="familyName">Nom</string>
+    <string name="showFriends">Voir/Ajouter des amis</string>
+    <string name="meeting">Reunion</string>
+    <string name="addfriend">Ajouter un ami</string>
+    <string name="descriptionAddFriend">Tu veux inviter un ami a ta réunion ? Ajoute son email !</string>
+    <string name="noFriends">Tu n\'as pas d\'amis !</string>
+    <string name="cantAddFriend">Impossible d\'ajouter l\'ami</string>
+    <string name="userNotExist">L\'utilisateur n\'existe pas</string>
+    <string name="deleteFriend">Effacer un ami</string>
+    <string name="confirmationDelete">Est vous sùr de vouloir effacer votre ami ?</string>
 </resources>

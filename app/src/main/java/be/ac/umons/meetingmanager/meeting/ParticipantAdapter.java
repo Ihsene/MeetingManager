@@ -1,6 +1,7 @@
 package be.ac.umons.meetingmanager.meeting;
 
 
+import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.TextView;
+
+import java.util.ArrayList;
 
 import be.ac.umons.meetingmanager.R;
 import be.ac.umons.meetingmanager.connection.UserInfo;
@@ -17,29 +20,36 @@ import be.ac.umons.meetingmanager.connection.UserInfo;
  */
 
 public class ParticipantAdapter extends ArrayAdapter<UserInfo> {
-    UserInfo[] friends;
-    Context context;
+    private ArrayList<UserInfo> friends;
+    private Context context;
+    private int resource;
 
-    public ParticipantAdapter(Context context, UserInfo[] data){
-        super(context, R.layout.activity_create_meeting_list, data);
+    public ParticipantAdapter(Context context, ArrayList<UserInfo> data, int resource){
+        super(context, resource, data);
         this.context = context;
         this.friends = data;
+        this.resource = resource;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        LayoutInflater inflater = ((CreateMeetingActivity)context).getLayoutInflater();
-        convertView = inflater.inflate(R.layout.activity_create_meeting_list, parent, false);
+        LayoutInflater inflater = ((Activity)context).getLayoutInflater();
+        convertView = inflater.inflate(resource, parent, false);
 
         TextView name = (TextView) convertView.findViewById(R.id.textViewName);
         TextView email = (TextView) convertView.findViewById(R.id.textViewEmail);
-        CheckBox cb = (CheckBox) convertView.findViewById(R.id.checkBoxParticipant);
-        name.setText(friends[position].getName()+" "+friends[position].getFamilyName());
-        email.setText(friends[position].getEmail());
-        if(friends[position].getValue() == 1)
-            cb.setChecked(true);
-        else
-            cb.setChecked(false);
+
+        name.setText(friends.get(position).getName()+" "+friends.get(position).getFamilyName());
+        email.setText(friends.get(position).getEmail());
+
+        if(resource == R.layout.activity_create_meeting_list)
+        {
+            CheckBox cb = (CheckBox) convertView.findViewById(R.id.checkBoxParticipant);
+            if(friends.get(position).getValue() == 1)
+                cb.setChecked(true);
+            else
+                cb.setChecked(false);
+        }
         return convertView;
     }
 

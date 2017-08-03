@@ -36,6 +36,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private GoogleApiClient googleApiClient;
     private ProgressDialog pd;
+    private UserInfo user = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +45,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         sharedPreferences = getSharedPreferences(getString(R.string.setting), this.MODE_PRIVATE);
         if(!sharedPreferences.getString(getString(R.string.accountID),"").equals(""))
-            startMenuActivity(null);
+        {
+            startMenuActivity(); // TODO : maj la db
+        }
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.server_client_id))
@@ -86,7 +89,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void onSucessLogin(GoogleSignInResult result) throws JSONException {
         final GoogleSignInAccount acct = result.getSignInAccount();
-        final UserInfo user = new UserInfo(acct.getGivenName(), acct.getFamilyName(), acct.getEmail(), acct.getId(), acct.getIdToken());
+        user = new UserInfo(acct.getGivenName(), acct.getFamilyName(), acct.getEmail(), acct.getId(), acct.getIdToken());
         Gson gson  = new GsonBuilder().excludeFieldsWithModifiers(java.lang.reflect.Modifier.TRANSIENT).create();
         JsonObjectRequest req = new JsonObjectRequest(Request.Method.POST,(String) getText(R.string.login_url), new JSONObject(gson.toJson(user)),
                 new Response.Listener<JSONObject>() {
@@ -94,7 +97,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     public void onResponse(JSONObject response) {
                         try {
                             if(acct.getIdToken().equals(response.getString("token"))) {
-                                startMenuActivity(user);
+                                user.setName(response.getString("name"));
+                                user.setFamilyName(response.getString("familyname"));
+                                startMenuActivity();
                             }
                             else
                                 Toast.makeText(MainActivity.this, R.string.conn_error, Toast.LENGTH_LONG).show();
@@ -106,19 +111,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(MainActivity.this, R.string.server_reachability, Toast.LENGTH_LONG).show();
+                Toast.makeText(MainActivity.this, error.toString(), Toast.LENGTH_LONG).show();
                 pd.dismiss();
             }
         });
         VolleyConnection.getInstance(getApplicationContext()).addToRequestQueue(req);
     }
-    private void startMenuActivity(UserInfo user) {
+    private void startMenuActivity() {
         if(user != null)
         {
             SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString(getString(R.string.firstName), user.getName());
+            editor.putString(getString(R.string.familyName), user.getFamilyName());
+            editor.putString(getString(R.string.email), user.getEmail());
             editor.putString(getString(R.string.accountID), user.getId());
             editor.putString(getString(R.string.accountToken), user.getToken());
             editor.commit();
+
         }
         Intent intent = new Intent(this, MenuActivity.class);
         startActivity(intent);

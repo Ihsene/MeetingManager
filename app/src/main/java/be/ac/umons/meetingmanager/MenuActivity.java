@@ -24,14 +24,14 @@ public class MenuActivity extends AppCompatActivity {
             case R.id.buttonOptions:  intent = new Intent(this, OptionActivity.class); break;
             case R.id.buttonLogout:  handleLogout(); break;
         }
-        startActivity(intent);
+        if(view.getId() != R.id.buttonLogout)
+            startActivity(intent);
     }
 
     public void handleLogout() {
         SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.setting), this.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.remove(getString(R.string.accountID));
-        editor.remove(getString(R.string.accountToken));
+        editor.clear();
         editor.commit();
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
