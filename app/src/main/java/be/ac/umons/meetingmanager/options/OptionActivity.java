@@ -1,10 +1,9 @@
-package be.ac.umons.meetingmanager;
+package be.ac.umons.meetingmanager.options;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -33,6 +32,7 @@ public class OptionActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_option);
+        setTitle(R.string.buttonOption);
 
         sharedPreferences = getSharedPreferences(getString(R.string.setting), this.MODE_PRIVATE);
         user = UserInfo.getUserInfoFromCache(this);

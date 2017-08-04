@@ -25,7 +25,7 @@
     <string name="buttonSave">Save</string>
     <string name="buttonReturn">Go Back</string>
     <string name="connexion">Connexion...</string>
-    <string name="friendList">Select your participants</string>
+    <string name="friendList">Your Subjects</string>
     <string name="setting">setting</string>
     <string name="accountID">account</string>
     <string name="accountToken">accountToken</string>
@@ -48,4 +48,12 @@
     <string name="confirmationDelete">Are you sure you want to delete this entry?</string>
     <string name="remove_friend_url">http://sith-meetings.umons.ac.be:8080/removeFriend</string>
     <string name="updateOption">http://sith-meetings.umons.ac.be:8080/updateName</string>
+    <string name="title_activity_add_subjets">AddSubjetsActivity</string>
+    <string name="up">UP</string>
+    <string name="down">DOWN</string>
+    <string name="friendListTitle">Friends list</string>
+    <string name="meetingListTitle">Meeting list</string>
+    <string name="createMeetingTitle">Create your meeting</string>
+    <string name="confirmationDeleteSubjet">Do you want to delete this subjet</string>
+    <string name="deleteSubject">Deleting subject</string>
 </resources>

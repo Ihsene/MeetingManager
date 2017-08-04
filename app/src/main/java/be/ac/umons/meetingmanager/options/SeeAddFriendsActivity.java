@@ -1,17 +1,15 @@
-package be.ac.umons.meetingmanager;
+package be.ac.umons.meetingmanager.options;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
-import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -34,9 +32,10 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import be.ac.umons.meetingmanager.R;
 import be.ac.umons.meetingmanager.connection.UserInfo;
 import be.ac.umons.meetingmanager.connection.VolleyConnection;
-import be.ac.umons.meetingmanager.meeting.ParticipantAdapter;
+import be.ac.umons.meetingmanager.meeting.UserAdapter;
 
 public class SeeAddFriendsActivity extends AppCompatActivity {
 
@@ -44,7 +43,7 @@ public class SeeAddFriendsActivity extends AppCompatActivity {
     private Dialog dialog;
     private UserInfo user;
     private TextView noFriends;
-    private ParticipantAdapter adapter;
+    private UserAdapter adapter;
     private ArrayList<UserInfo> friends;
     private Gson gson;
 
@@ -52,6 +51,7 @@ public class SeeAddFriendsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_see_add_friends);
+        setTitle(R.string.friendListTitle);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         noFriends = (TextView) findViewById(R.id.noFriendsTextView);
@@ -62,7 +62,8 @@ public class SeeAddFriendsActivity extends AppCompatActivity {
         dialog = new Dialog(this);
         dialog.setContentView(R.layout.layout_add_friends_dialog);
         final EditText editText = (EditText) dialog.findViewById(R.id.editTextFriend);
-        Button button = (Button) dialog.findViewById(R.id.addFriendButton);
+
+        final Button button = (Button) dialog.findViewById(R.id.addFriendButton);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -73,6 +74,15 @@ public class SeeAddFriendsActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
                 dialog.dismiss();
+            }
+        });
+        editText.setOnKeyListener(new View.OnKeyListener() {
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                    button.performClick();
+                    return true;
+                }
+                return false;
             }
         });
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -92,7 +102,7 @@ public class SeeAddFriendsActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        adapter = new ParticipantAdapter(this, friends, R.layout.activity_see_add_friends_list);
+        adapter = new UserAdapter(this, friends, R.layout.activity_see_add_friends_list);
         listViewParticipant.setAdapter(adapter);
         listViewParticipant.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override

@@ -1,4 +1,4 @@
-package be.ac.umons.meetingmanager.meeting;
+package be.ac.umons.meetingmanager.meeting.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,7 +10,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import be.ac.umons.meetingmanager.R;
-import be.ac.umons.meetingmanager.meeting.CreateMeetingActivity;
 
 public class MeetingManagerActivity extends AppCompatActivity {
 
@@ -20,6 +19,7 @@ public class MeetingManagerActivity extends AppCompatActivity {
         setContentView(R.layout.activity_meeting_manager);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        setTitle(R.string.meetingListTitle);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {

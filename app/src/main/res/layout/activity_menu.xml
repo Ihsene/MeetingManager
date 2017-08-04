@@ -23,8 +23,8 @@
 
     <Button
         android:id="@+id/buttonCreateM"
-        android:layout_width="267dp"
-        android:layout_height="46dp"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
         android:layout_marginBottom="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
@@ -39,8 +39,8 @@
 
     <Button
         android:id="@+id/buttonOptions"
-        android:layout_width="267dp"
-        android:layout_height="46dp"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
         android:layout_marginBottom="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
@@ -55,8 +55,8 @@
 
     <Button
         android:id="@+id/buttonLogout"
-        android:layout_width="267dp"
-        android:layout_height="46dp"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
         android:layout_marginBottom="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
@@ -71,8 +71,8 @@
 
     <Button
         android:id="@+id/buttonJoinM"
-        android:layout_width="267dp"
-        android:layout_height="46dp"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
         android:layout_marginBottom="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"

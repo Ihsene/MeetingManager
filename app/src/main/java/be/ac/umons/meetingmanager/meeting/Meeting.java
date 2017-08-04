@@ -14,7 +14,7 @@ public class Meeting {
     private ArrayList<Subject> subjects;
 
     public Meeting() {
-
+        subjects = new ArrayList<Subject>();
     }
 
     public Meeting(int masterID, String title, String place, Date date, ArrayList<Subject> subjects) {

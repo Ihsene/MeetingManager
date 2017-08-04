@@ -6,7 +6,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 
-import be.ac.umons.meetingmanager.meeting.MeetingManagerActivity;
+import be.ac.umons.meetingmanager.meeting.activities.MeetingManagerActivity;
+import be.ac.umons.meetingmanager.options.OptionActivity;
 
 public class MenuActivity extends AppCompatActivity {
 

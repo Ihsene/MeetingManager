@@ -19,12 +19,12 @@ import be.ac.umons.meetingmanager.connection.UserInfo;
  * Created by SogeP on 02-08-17.
  */
 
-public class ParticipantAdapter extends ArrayAdapter<UserInfo> {
+public class UserAdapter extends ArrayAdapter<UserInfo> {
     private ArrayList<UserInfo> friends;
     private Context context;
     private int resource;
 
-    public ParticipantAdapter(Context context, ArrayList<UserInfo> data, int resource){
+    public UserAdapter(Context context, ArrayList<UserInfo> data, int resource){
         super(context, resource, data);
         this.context = context;
         this.friends = data;
@@ -42,14 +42,14 @@ public class ParticipantAdapter extends ArrayAdapter<UserInfo> {
         name.setText(friends.get(position).getName()+" "+friends.get(position).getFamilyName());
         email.setText(friends.get(position).getEmail());
 
-        if(resource == R.layout.activity_create_meeting_list)
+        /*if(resource == R.layout.layout_subjet_list)
         {
             CheckBox cb = (CheckBox) convertView.findViewById(R.id.checkBoxParticipant);
             if(friends.get(position).getValue() == 1)
                 cb.setChecked(true);
             else
                 cb.setChecked(false);
-        }
+        }*/
         return convertView;
     }
 
