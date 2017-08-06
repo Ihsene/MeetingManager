@@ -28,7 +28,7 @@ public class UserInfo {
     private String email;
     private String id;
     private String token;
-    private int value;
+    private boolean taken;
     private String friend;
 
     public UserInfo(String name, String familyName, String email, String id, String token) {
@@ -90,19 +90,19 @@ public class UserInfo {
         this.token = token;
     }
 
-    public int getValue() {
-        return value;
-    }
-
-    public void setValue(int value) {
-        this.value = value;
-    }
-
     public String getFriend() {
         return friend;
     }
 
     public void setFriend(String friend) {
         this.friend = friend;
+    }
+
+    public boolean isTaken() {
+        return taken;
+    }
+
+    public void setTaken(boolean taken) {
+        this.taken = taken;
     }
 }

@@ -31,7 +31,6 @@ import be.ac.umons.meetingmanager.connection.VolleyConnection;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private static final int RC_SIGN_IN = 1234;
-    private static final String TAG = "MM";
     private SharedPreferences sharedPreferences;
 
     private GoogleApiClient googleApiClient;

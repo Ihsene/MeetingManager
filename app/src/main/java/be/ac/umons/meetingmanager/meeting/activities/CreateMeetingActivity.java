@@ -18,19 +18,29 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 
 import be.ac.umons.meetingmanager.R;
 import be.ac.umons.meetingmanager.connection.UserInfo;
+import be.ac.umons.meetingmanager.connection.VolleyConnection;
 import be.ac.umons.meetingmanager.meeting.Meeting;
 import be.ac.umons.meetingmanager.meeting.Subject;
 import be.ac.umons.meetingmanager.meeting.SubjectAdapter;
@@ -49,7 +59,11 @@ public class CreateMeetingActivity extends AppCompatActivity implements DatePick
     private SubjectAdapter subjectAdapter;
     private Gson gson;
     private UserInfo user;
-    private Dialog dialog;
+
+    //Dialog
+    private DialogSubjet dialog;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,11 +72,6 @@ public class CreateMeetingActivity extends AppCompatActivity implements DatePick
         setTitle(R.string.createMeetingTitle);
         meeting = new Meeting();
         calendar = Calendar.getInstance();
-
-
-
-        dialogAddSubjet();
-
         name = (EditText) findViewById(R.id.nameEditText);
         location = (EditText) findViewById(R.id.locationEditText);
         date = (TextView) findViewById(R.id.textViewDateAndTime);
@@ -73,6 +82,11 @@ public class CreateMeetingActivity extends AppCompatActivity implements DatePick
         datePickerDialog = new DatePickerDialog(this, CreateMeetingActivity.this, year, month, day);
         user = UserInfo.getUserInfoFromCache(this);
         gson = new GsonBuilder().excludeFieldsWithModifiers(java.lang.reflect.Modifier.TRANSIENT).create();
+        try {
+            handleGetFriends();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
         location.setOnKeyListener(new View.OnKeyListener() {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -83,17 +97,13 @@ public class CreateMeetingActivity extends AppCompatActivity implements DatePick
                 return false;
             }
         });
-        meeting.getSubjects().add(new Subject("Introduction","qu'est ce qu'on va faire?",15,new ArrayList<Integer>()));
-        meeting.getSubjects().add(new Subject("L'eau","On fait quoi après l'eau ?",10,new ArrayList<Integer>()));
-        meeting.getSubjects().add(new Subject("Le gateau","On mange le gateau",25,new ArrayList<Integer>()));
-        meeting.getSubjects().add(new Subject("Conclusion","Je suis remplit",5,new ArrayList<Integer>()));
-
 
         subjectAdapter = new SubjectAdapter(this, meeting.getSubjects(), R.layout.layout_subjet_list);
         listViewSubjets.setAdapter(subjectAdapter);
         listViewSubjets.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                dialog.load(meeting.getSubjects().get(i), i);
                 dialog.show();
             }
         });
@@ -102,6 +112,20 @@ public class CreateMeetingActivity extends AppCompatActivity implements DatePick
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
                 handleActionDelete((Subject) adapterView.getItemAtPosition(i),i);
                 return true;
+            }
+        });
+
+        createDialog();
+    }
+
+    public  void createDialog() {
+        dialog = new DialogSubjet(this, friends, meeting);
+        dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialogInterface) {
+                subjectAdapter.notifyDataSetChanged();
+                for(UserInfo itr : friends)
+                    itr.setTaken(false);
             }
         });
     }
@@ -122,6 +146,40 @@ public class CreateMeetingActivity extends AppCompatActivity implements DatePick
                         // do nothing
                     }
                 }).setIcon(android.R.drawable.ic_dialog_alert).show();
+    }
+
+    public void handleGetFriends() throws JSONException { // TODO : Duplication to remove
+        friends = new ArrayList<UserInfo>();
+        ArrayList<JSONObject> jsonObjects = new ArrayList<JSONObject>();
+        jsonObjects.add(new JSONObject(gson.toJson(user)));
+        JsonArrayRequest req = new JsonArrayRequest(Request.Method.POST,(String) getText(R.string.getFriends), new JSONArray(jsonObjects),
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        UserInfo user = null;
+                        for(int i = 0; i < response.length(); i++)
+                        {
+                            try {
+                                user = new UserInfo(response.getJSONObject(i).getString("FIRST_NAME"),
+                                        response.getJSONObject(i).getString("LAST_NAME"),
+                                        response.getJSONObject(i).getString("EMAIL"),"",
+                                        "");
+                                friends.add(user);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(CreateMeetingActivity.this, error.toString(), Toast.LENGTH_LONG).show();
+            }
+        });
+        req.setRetryPolicy(new DefaultRetryPolicy(0, DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        VolleyConnection.getInstance(getApplicationContext()).addToRequestQueue(req);
+
     }
 
     @Override
@@ -146,26 +204,12 @@ public class CreateMeetingActivity extends AppCompatActivity implements DatePick
 
     }
 
-    public void dialogAddSubjet() {
-
-        dialog = new Dialog(this);
-        dialog.setContentView(R.layout.layout_add_subjet_dialog);
-
-        String[] meetings = {"Android","IPhone","WindowsMobile","Blackberry",
-                "WebOS","Ubuntu","Windows7","Max OS X"};
-        ArrayAdapter adapter = new ArrayAdapter<String>(this,
-                R.layout.activity_meeting_manager_listview, meetings);
-
-        ListView listView = (ListView) dialog.findViewById(R.id.listviewFriends);
-        listView.setAdapter(adapter);
-    }
-
     public void actionButton(View view) {
         Intent intent = null;
         switch (view.getId()) {
             case R.id.buttonSetTime: datePickerDialog.show(); break;
             case R.id.buttonSave: handleSaveMeeting(); break;
-            case R.id.buttonAddSubjets: dialog.show(); break;
+            case R.id.buttonAddSubjets: createDialog(); dialog.show(); break;
         }
     }
 }

@@ -2,6 +2,8 @@ package be.ac.umons.meetingmanager.meeting;
 
 import java.util.ArrayList;
 
+import be.ac.umons.meetingmanager.connection.UserInfo;
+
 /**
  * Created by SogeP on 02-08-17.
  */
@@ -9,13 +11,13 @@ import java.util.ArrayList;
 public class Subject {
     private String name, info;
     private int duration;
-    private ArrayList<Integer> participantID;
+    private ArrayList<UserInfo> participants;
 
-    public Subject(String name, String info, int duration, ArrayList<Integer> participantID) {
+    public Subject(String name, String info, int duration, ArrayList<UserInfo> participants) {
         this.name = name;
         this.info = info;
         this.duration = duration;
-        this.participantID = participantID;
+        this.participants = participants;
     }
 
     public String getName() {
@@ -42,11 +44,11 @@ public class Subject {
         this.duration = duration;
     }
 
-    public ArrayList<Integer> getParticipantID() {
-        return participantID;
+    public ArrayList<UserInfo> getParticipants() {
+        return participants;
     }
 
-    public void setParticipantID(ArrayList<Integer> participantID) {
-        this.participantID = participantID;
+    public void setParticipants(ArrayList<UserInfo> participants) {
+        this.participants = participants;
     }
 }

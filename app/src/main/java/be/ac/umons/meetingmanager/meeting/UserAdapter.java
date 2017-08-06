@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -32,7 +33,7 @@ public class UserAdapter extends ArrayAdapter<UserInfo> {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = ((Activity)context).getLayoutInflater();
         convertView = inflater.inflate(resource, parent, false);
 
@@ -42,14 +43,19 @@ public class UserAdapter extends ArrayAdapter<UserInfo> {
         name.setText(friends.get(position).getName()+" "+friends.get(position).getFamilyName());
         email.setText(friends.get(position).getEmail());
 
-        /*if(resource == R.layout.layout_subjet_list)
+        if(resource == R.layout.layout_see_friends)
         {
-            CheckBox cb = (CheckBox) convertView.findViewById(R.id.checkBoxParticipant);
-            if(friends.get(position).getValue() == 1)
-                cb.setChecked(true);
-            else
-                cb.setChecked(false);
-        }*/
+            CheckBox cb = (CheckBox) convertView.findViewById(R.id.checkBox);
+            cb.setChecked(friends.get(position).isTaken());
+            cb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    friends.get(position).setTaken(isChecked);
+
+                }
+            });
+        }
         return convertView;
     }
 
