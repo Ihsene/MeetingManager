@@ -21,7 +21,7 @@ public class MenuActivity extends AppCompatActivity {
         Intent intent = null;
         switch (view.getId()) {
             case R.id.buttonCreateM:  intent = new Intent(this, MeetingManagerActivity.class); break;
-            case R.id.buttonJoinM:  intent = new Intent(this, MeetingManagerActivity.class); break;
+            case R.id.buttonJoinM:  intent = new Intent(this, MeetingManagerActivity.class); intent.putExtra("join", true); break;
             case R.id.buttonOptions:  intent = new Intent(this, OptionActivity.class); break;
             case R.id.buttonLogout:  handleLogout(); break;
         }

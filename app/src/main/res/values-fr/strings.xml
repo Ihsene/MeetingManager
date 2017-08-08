@@ -5,7 +5,7 @@
     <string name="error_login">Impossible de se connecter</string>
     <string name="conn_error">Problème avec votre compte</string>
     <string name="server_reachability">Problème avec le serveur</string>
-    <string name="buttonJoin">Rejoindre une réunion</string>
+    <string name="buttonJoin">Démarrer/Rejoindre une réunion</string>
     <string name="buttonCreate">Créer/Modifier une réunion</string>
     <string name="buttonLogout">Se déconnecter</string>
     <string name="nameMeeting">Nom</string>
@@ -40,4 +40,10 @@
     <string name="meetingCreated">Réunion ajoutée</string>
     <string name="deleteMeeting">Effacer la réunion</string>
     <string name="confirmationDeleteMeeting">Etes-vous sûr de vouloir effacer cette réunion ?</string>
+    <string name="startMeeting">Démarrer une réunion</string>
+    <string name="presence">Les Présences</string>
+    <string name="editMeeting">Modifier la réunion</string>
+    <string name="next">Suivant</string>
+    <string name="timeLeft">Temps restant : </string>
+    <string name="nextSubjet"></string>
 </resources>

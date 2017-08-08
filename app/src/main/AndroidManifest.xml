@@ -11,31 +11,35 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity"
-                  android:screenOrientation="portrait">
+        <activity
+            android:name=".MainActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MenuActivity"
-                  android:screenOrientation="portrait"/>
+        <activity
+            android:name=".MenuActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".meeting.activities.MeetingManagerActivity"
             android:label="@string/title_activity_meeting_manager"
-            android:theme="@style/AppTheme.NoActionBar"
             android:screenOrientation="portrait"
-            />
-        <activity android:name=".meeting.activities.CreateMeetingActivity"
-                  android:screenOrientation="portrait"/>
-        <activity android:name=".options.OptionActivity"
-                  android:screenOrientation="portrait"/>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".meeting.activities.CreateMeetingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".options.OptionActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".options.SeeAddFriendsActivity"
             android:label="@string/title_activity_see_add_friends"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".meeting.activities.MeetingActivity"></activity>
     </application>
 
 </manifest>

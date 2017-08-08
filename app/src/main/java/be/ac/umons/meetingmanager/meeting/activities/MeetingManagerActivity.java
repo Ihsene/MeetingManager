@@ -67,6 +67,14 @@ public class MeetingManagerActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        if(getIntent().getExtras() != null && getIntent().getExtras().getBoolean("join"))
+        {
+            setTitle(R.string.startMeeting);
+            FloatingActionButton floatingActionButton = (FloatingActionButton) findViewById(R.id.fab);
+            floatingActionButton.setVisibility(View.INVISIBLE);
+        }
+
     }
 
     @Override
@@ -81,13 +89,16 @@ public class MeetingManagerActivity extends AppCompatActivity {
         adapter = new MeetingAdapter(this, meetings, R.layout.layout_meeting_list);
         listView = (ListView) findViewById(R.id.meeting_list);
         listView.setAdapter(adapter);
-        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-                handleActionDelete((Meeting) adapterView.getItemAtPosition(i),i);
-                return true;
-            }
-        });
+        if(!(getIntent().getExtras() != null && getIntent().getExtras().getBoolean("join")))
+        {
+            listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                @Override
+                public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    handleActionDelete((Meeting) adapterView.getItemAtPosition(i),i);
+                    return true;
+                }
+            });
+        }
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -131,12 +142,14 @@ public class MeetingManagerActivity extends AppCompatActivity {
 
                                 for(int j = 0; j < +response.getJSONObject(2).getJSONArray("participants").length(); j++)
                                     if(Integer.parseInt(response.getJSONObject(2).getJSONArray("participants").getJSONObject(j).getString("SUBJET_ID")) == subject.getId())
-                                        subject.getParticipants().add(new UserInfo("","",response.getJSONObject(2).getJSONArray("participants").getJSONObject(j).getString("EMAIL"),
+                                        subject.getParticipants().add(new UserInfo(response.getJSONObject(2).getJSONArray("participants").getJSONObject(j).getString("FIRST_NAME"),
+                                                response.getJSONObject(2).getJSONArray("participants").getJSONObject(j).getString("LAST_NAME"),
+                                                response.getJSONObject(2).getJSONArray("participants").getJSONObject(j).getString("EMAIL"),
                                                 "",""));
                                 meeting.getSubjects().add(subject);
                             }
 
-                            Intent i = new Intent(MeetingManagerActivity.this, CreateMeetingActivity.class);
+                            Intent i = new Intent(MeetingManagerActivity.this, !(getIntent().getExtras() != null && getIntent().getExtras().getBoolean("join")) ? CreateMeetingActivity.class : MeetingActivity.class);
                             i.putExtra("meeting", meeting);
                             startActivity(i);
                         } catch (JSONException e) {
