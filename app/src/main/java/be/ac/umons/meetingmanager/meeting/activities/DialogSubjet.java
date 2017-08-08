@@ -1,6 +1,7 @@
 package be.ac.umons.meetingmanager.meeting.activities;
 
 import android.app.Dialog;
+import android.app.admin.SystemUpdatePolicy;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -12,6 +13,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import be.ac.umons.meetingmanager.R;
 import be.ac.umons.meetingmanager.connection.UserInfo;
@@ -82,11 +84,15 @@ public class DialogSubjet extends Dialog {
                     }
 
                 if(load) {
-                    meeting.getSubjects().remove(positionLoaded);
-                    meeting.getSubjects().add(positionLoaded, new Subject(nameSubjet.getText().toString(), info.getText().toString(),(seekBar.getProgress()+1)*5,participants));
+                    meeting.getSubjects().get(positionLoaded).setName(nameSubjet.getText().toString());
+                    meeting.getSubjects().get(positionLoaded).setInfo(info.getText().toString());
+                    meeting.getSubjects().get(positionLoaded).setDuration((seekBar.getProgress()+1)*5);
+                    meeting.getSubjects().get(positionLoaded).setParticipants(participants);
                     load = false;
                 }else
+                {
                     meeting.getSubjects().add(new Subject(nameSubjet.getText().toString(), info.getText().toString(),(seekBar.getProgress()+1)*5,participants));
+                }
                 dismiss();
             }
         });
@@ -94,6 +100,7 @@ public class DialogSubjet extends Dialog {
     }
 
     public void load(Subject subject, int positionLoaded) {
+        this.positionLoaded = positionLoaded;
         load = true;
         nameSubjet.setText(subject.getName());
         info.setText(subject.getInfo());

@@ -2,6 +2,8 @@ package be.ac.umons.meetingmanager.connection;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -17,12 +19,13 @@ import java.util.Set;
 
 import be.ac.umons.meetingmanager.MainActivity;
 import be.ac.umons.meetingmanager.R;
+import be.ac.umons.meetingmanager.meeting.Meeting;
 
 /**
  * Created by SogeP on 27-07-17.
  */
 
-public class UserInfo {
+public class UserInfo implements Parcelable {
     private String name;
     private String familyName;
     private String email;
@@ -30,6 +33,7 @@ public class UserInfo {
     private String token;
     private boolean taken;
     private String friend;
+    private Meeting meeting;
 
     public UserInfo(String name, String familyName, String email, String id, String token) {
         this.setName(name);
@@ -105,4 +109,52 @@ public class UserInfo {
     public void setTaken(boolean taken) {
         this.taken = taken;
     }
+
+    public Meeting getMeeting() {
+        return meeting;
+    }
+
+    public void setMeeting(Meeting meeting) {
+        this.meeting = meeting;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.name);
+        dest.writeString(this.familyName);
+        dest.writeString(this.email);
+        dest.writeString(this.id);
+        dest.writeString(this.token);
+        dest.writeByte(this.taken ? (byte) 1 : (byte) 0);
+        dest.writeString(this.friend);
+        dest.writeParcelable(this.meeting, flags);
+    }
+
+    protected UserInfo(Parcel in) {
+        this.name = in.readString();
+        this.familyName = in.readString();
+        this.email = in.readString();
+        this.id = in.readString();
+        this.token = in.readString();
+        this.taken = in.readByte() != 0;
+        this.friend = in.readString();
+        this.meeting = in.readParcelable(Meeting.class.getClassLoader());
+    }
+
+    public static final Parcelable.Creator<UserInfo> CREATOR = new Parcelable.Creator<UserInfo>() {
+        @Override
+        public UserInfo createFromParcel(Parcel source) {
+            return new UserInfo(source);
+        }
+
+        @Override
+        public UserInfo[] newArray(int size) {
+            return new UserInfo[size];
+        }
+    };
 }

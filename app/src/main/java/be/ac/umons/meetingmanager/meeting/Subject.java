@@ -1,5 +1,8 @@
 package be.ac.umons.meetingmanager.meeting;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.ArrayList;
 
 import be.ac.umons.meetingmanager.connection.UserInfo;
@@ -8,7 +11,8 @@ import be.ac.umons.meetingmanager.connection.UserInfo;
  * Created by SogeP on 02-08-17.
  */
 
-public class Subject {
+public class Subject implements Parcelable {
+    private int id;
     private String name, info;
     private int duration;
     private ArrayList<UserInfo> participants;
@@ -51,4 +55,46 @@ public class Subject {
     public void setParticipants(ArrayList<UserInfo> participants) {
         this.participants = participants;
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(this.id);
+        dest.writeString(this.name);
+        dest.writeString(this.info);
+        dest.writeInt(this.duration);
+        dest.writeTypedList(this.participants);
+    }
+
+    protected Subject(Parcel in) {
+        this.id = in.readInt();
+        this.name = in.readString();
+        this.info = in.readString();
+        this.duration = in.readInt();
+        this.participants = in.createTypedArrayList(UserInfo.CREATOR);
+    }
+
+    public static final Parcelable.Creator<Subject> CREATOR = new Parcelable.Creator<Subject>() {
+        @Override
+        public Subject createFromParcel(Parcel source) {
+            return new Subject(source);
+        }
+
+        @Override
+        public Subject[] newArray(int size) {
+            return new Subject[size];
+        }
+    };
 }

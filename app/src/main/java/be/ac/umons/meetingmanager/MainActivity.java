@@ -17,6 +17,7 @@ import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -42,12 +43,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        sharedPreferences = getSharedPreferences(getString(R.string.setting), this.MODE_PRIVATE);
-        if(!sharedPreferences.getString(getString(R.string.accountID),"").equals(""))
-        {
-            startMenuActivity(); // TODO : maj la db
-        }
-
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.server_client_id))
                 .requestEmail().build();
@@ -57,6 +52,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.sign_in_button).setOnClickListener(this);
         pd = new ProgressDialog(this, ProgressDialog.STYLE_SPINNER);
         pd.setMessage(getString(R.string.connexion));
+
+        sharedPreferences = getSharedPreferences(getString(R.string.setting), this.MODE_PRIVATE);
+        if(!sharedPreferences.getString(getString(R.string.accountID),"").equals(""))
+            signIn();
     }
 
     private void signIn() {
@@ -67,7 +66,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == RC_SIGN_IN) {
-            pd.show();
+            if(sharedPreferences.getString(getString(R.string.accountID),"").equals(""))
+                pd.show();
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             handleSignInResult(result);
         }

@@ -58,4 +58,11 @@
     <string name="deleteSubject">Deleting subject</string>
     <string name="subjetInfo">Info</string>
     <string name="duration">Duration :</string>
+    <string name="create_meeting_url">http://sith-meetings.umons.ac.be:8080/createMeeting</string>
+    <string name="meetingCreated">Meeting Created</string>
+    <string name="get_meeting_list_url">http://sith-meetings.umons.ac.be:8080/meetingList</string>
+    <string name="remove_meeting_url">http://sith-meetings.umons.ac.be:8080/removeMeeting</string>
+    <string name="deleteMeeting">Delete the meeting</string>
+    <string name="confirmationDeleteMeeting">Are you sur you want to delete this meeting ?</string>
+    <string name="get_meeting_url">http://sith-meetings.umons.ac.be:8080/getMeeting</string>
 </resources>

@@ -37,4 +37,7 @@
     <string name="deleteSubject">Effacer le sujet</string>
     <string name="duration">Durée :</string>
     <string name="subjetInfo">Description</string>
+    <string name="meetingCreated">Réunion ajoutée</string>
+    <string name="deleteMeeting">Effacer la réunion</string>
+    <string name="confirmationDeleteMeeting">Etes-vous sûr de vouloir effacer cette réunion ?</string>
 </resources>
