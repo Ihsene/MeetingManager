@@ -9,10 +9,8 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -24,7 +22,6 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -34,7 +31,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 
 import be.ac.umons.meetingmanager.R;
 import be.ac.umons.meetingmanager.connection.UserInfo;
@@ -42,8 +38,6 @@ import be.ac.umons.meetingmanager.connection.VolleyConnection;
 import be.ac.umons.meetingmanager.meeting.Meeting;
 import be.ac.umons.meetingmanager.meeting.MeetingAdapter;
 import be.ac.umons.meetingmanager.meeting.Subject;
-import be.ac.umons.meetingmanager.meeting.SubjectAdapter;
-import be.ac.umons.meetingmanager.options.SeeAddFriendsActivity;
 
 public class MeetingManagerActivity extends AppCompatActivity {
 
@@ -102,13 +96,39 @@ public class MeetingManagerActivity extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                try {
-                    loadMeeting((Meeting) adapterView.getItemAtPosition(i));
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                if(getIntent().getExtras() != null && getIntent().getExtras().getBoolean("join"))
+                    showComfirmation((Meeting) adapterView.getItemAtPosition(i));
+                else {
+                    try {
+                        loadMeeting((Meeting) adapterView.getItemAtPosition(i));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 }
+
             }
         });
+    }
+
+    public void showComfirmation(final Meeting meeting) {
+        AlertDialog.Builder builder = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ?
+                new AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert):
+                new AlertDialog.Builder(this);
+        builder.setTitle(R.string.startMeetingCom).setMessage(R.string.startingMeeting)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        try {
+                            loadMeeting(meeting);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                })
+                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // do nothing
+                    }
+                }).setIcon(android.R.drawable.ic_dialog_alert).show();
     }
 
     public void loadMeeting(Meeting meeting) throws JSONException {
@@ -175,7 +195,7 @@ public class MeetingManagerActivity extends AppCompatActivity {
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         try {
-                            handleRemoveFriendFromDB(meeting, getApplicationContext());
+                            handleRemoveMeetingFromDB(meeting, getApplicationContext());
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -190,7 +210,7 @@ public class MeetingManagerActivity extends AppCompatActivity {
                 }).setIcon(android.R.drawable.ic_dialog_alert).show();
     }
 
-    public static void handleRemoveFriendFromDB(Meeting meeting, final Context c) throws JSONException {
+    public static void handleRemoveMeetingFromDB(Meeting meeting, final Context c) throws JSONException {
         UserInfo user = UserInfo.getUserInfoFromCache(c);
         user.setMeeting(meeting);
         Gson gson = new GsonBuilder().excludeFieldsWithModifiers(java.lang.reflect.Modifier.TRANSIENT).create();

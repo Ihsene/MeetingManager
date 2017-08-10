@@ -46,4 +46,16 @@
     <string name="next">Suivant</string>
     <string name="timeLeft">Temps restant : </string>
     <string name="nextSubjet"></string>
+    <string name="startMeetingCom">Démarrer la réunion ?</string>
+    <string name="startingMeeting">Voulez vous démarrer la réunion?</string>
+    <string name="startM">Démarrer</string>
+    <string name="endMeeting">Terminer</string>
+    <string name="leaveMeeting">Quitter la réunion ?</string>
+    <string name="leaveMeetingCon">Voulez vous quitter la réunion ?</string>
+    <string name="speedup">Accélérer !</string>
+    <string name="fiveminSet">Voulez vous régler le minuteur a 5 mins ?</string>
+    <string name="endofMeeting">Fin de la réunion</string>
+    <string name="endofmeetingCon">Voulez vous terminer la réunion ?</string>
+    <string name="editMeetingTitle">Modifier votre réunion !</string>
+    <string name="meetingUpdate">Réunion mise à jour</string>
 </resources>

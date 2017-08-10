@@ -1,7 +1,10 @@
 package be.ac.umons.meetingmanager.meeting.activities;
 
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.CountDownTimer;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,11 +13,15 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import org.json.JSONException;
+
+import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 import be.ac.umons.meetingmanager.R;
 import be.ac.umons.meetingmanager.connection.UserInfo;
 import be.ac.umons.meetingmanager.meeting.Meeting;
+import be.ac.umons.meetingmanager.meeting.Subject;
 import be.ac.umons.meetingmanager.meeting.UserAdapter;
 import be.ac.umons.meetingmanager.options.OptionActivity;
 
@@ -31,6 +38,24 @@ public class MeetingActivity extends AppCompatActivity {
     private final long FIVE_MIN = 5 * 60000;
 
     @Override
+    public void onBackPressed() {
+        AlertDialog.Builder builder = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ?
+                new AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert):
+                new AlertDialog.Builder(this);
+        builder.setTitle(R.string.leaveMeeting).setMessage(R.string.leaveMeetingCon)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                    }
+                })
+                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // do nothing
+                    }
+                }).setIcon(android.R.drawable.ic_dialog_alert).show();
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_meeting);
@@ -42,20 +67,43 @@ public class MeetingActivity extends AppCompatActivity {
         timerTextView = (TextView) findViewById(R.id.textViewTimer);
         editButton = (Button) findViewById(R.id.buttonEdit);
         nextButton = (Button) findViewById(R.id.buttonNext);
+        nextButton.setText(R.string.startM);
         listView = (ListView) findViewById(R.id.listPresence);
         setDateFromSubject();
     }
 
     public void handleNextButton() {
-        if (reamingTime > FIVE_MIN) {
-            setCount(FIVE_MIN);
-        } else {
-            currentSujectIndex += 1;
-            if (currentSujectIndex == meeting.getSubjects().size()) {
-                finish();
+        if(nextButton.getText().toString().equals(getString(R.string.startM)))
+        {
+            nextButton.setText(R.string.next);
+            setCount(meeting.getSubjects().get(currentSujectIndex).getDuration() * 60000);
+        }
+        else
+        {
+            if (reamingTime > FIVE_MIN) {
+                AlertDialog.Builder builder = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ?
+                        new AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert):
+                        new AlertDialog.Builder(this);
+                builder.setTitle(R.string.speedup).setMessage(R.string.fiveminSet)
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                setCount(FIVE_MIN);
+                            }
+                        })
+                        .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                // do nothing
+                            }
+                        }).setIcon(android.R.drawable.ic_dialog_alert).show();
             } else {
-                Log.d("mmmm","test : "+reamingTime);
-
+                if (currentSujectIndex == meeting.getSubjects().size() - 1){
+                    finishMeeting();
+                    return;
+                }
+                else
+                    currentSujectIndex += 1;
+                if (currentSujectIndex == meeting.getSubjects().size() - 1)
+                    nextButton.setText(R.string.endMeeting);
                 setDateFromSubject();
             }
         }
@@ -67,7 +115,18 @@ public class MeetingActivity extends AppCompatActivity {
         subjectDescription.setText(meeting.getSubjects().get(currentSujectIndex).getInfo());
         adapter = new UserAdapter(this, meeting.getSubjects().get(currentSujectIndex).getParticipants(), R.layout.layout_presence_member);
         listView.setAdapter(adapter);
-        setCount(meeting.getSubjects().get(currentSujectIndex).getDuration() * 60000);
+        int duration = meeting.getSubjects().get(currentSujectIndex).getDuration() * 60000;
+        updateTimer(duration);
+        if(!(nextButton.getText().toString().equals(getString(R.string.startM))))
+            setCount(duration);
+    }
+
+    public void updateTimer(long duration) {
+        timerTextView.setText(getString(R.string.timeLeft) + " " +
+                String.format("%d min %d sec",
+                        TimeUnit.MILLISECONDS.toMinutes(duration),
+                        TimeUnit.MILLISECONDS.toSeconds(duration) -
+                                TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(duration))));
     }
 
     public void setCount(long time) {
@@ -76,16 +135,29 @@ public class MeetingActivity extends AppCompatActivity {
         countDownTimer = new CountDownTimer(time, 1000) {
             public void onTick(long millisUntilFinished) {
                 reamingTime = millisUntilFinished;
-                timerTextView.setText(getString(R.string.timeLeft) + " " +
-                        String.format("%d min %d sec",
-                                TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished),
-                                TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) -
-                                        TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished))));
+                updateTimer(millisUntilFinished);
             }
-
             public void onFinish() {
+                finishMeeting();
             }
         }.start();
+    }
+
+    public void finishMeeting() {
+        AlertDialog.Builder builder = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ?
+                new AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert):
+                new AlertDialog.Builder(this);
+        builder.setTitle(R.string.endofMeeting).setMessage(R.string.endofmeetingCon)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                    }
+                })
+                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // do nothing
+                    }
+                }).setIcon(android.R.drawable.ic_dialog_alert).show();
     }
 
     public void actionOfButton(View view) {
@@ -95,7 +167,15 @@ public class MeetingActivity extends AppCompatActivity {
             case R.id.buttonEdit:
                 intent = new Intent(this, CreateMeetingActivity.class);
                 intent.putExtra("meeting", meeting);
-                startActivity(intent); break;
+                intent.putExtra("index", currentSujectIndex);
+                startActivityForResult(intent, 1); break;
+        }
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 1 && resultCode == RESULT_OK) {
+            Meeting tmp = data.getExtras().getParcelable("meetingM");
+            meeting.setSubjects(tmp.getSubjects());
         }
     }
 }

@@ -53,6 +53,11 @@ public class SubjectAdapter extends ArrayAdapter<Subject> {
                 swapAction(position, false);
             }
         });
+        if(subjects.get(position).isFreeze())
+        {
+            down.setVisibility(View.INVISIBLE);
+            up.setVisibility(View.INVISIBLE);
+        }
 
 
         name.setText(subjects.get(position).getName()+" - "+subjects.get(position).getDuration()+" min");
@@ -62,7 +67,7 @@ public class SubjectAdapter extends ArrayAdapter<Subject> {
 
     public void swapAction(int position, boolean down) {
         int finalPosition = position+(down?-1:+1);
-        if((position == 0 && down) ||(position == subjects.size()-1 && !down))
+        if((position == 0 && down) ||(position == subjects.size()-1 && !down) || (subjects.get(finalPosition).isFreeze()))
             return;
         Collections.swap(subjects, position, finalPosition);
         this.notifyDataSetChanged();

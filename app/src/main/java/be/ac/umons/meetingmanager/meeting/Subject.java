@@ -16,6 +16,7 @@ public class Subject implements Parcelable {
     private String name, info;
     private int duration;
     private ArrayList<UserInfo> participants;
+    private boolean freeze = false;
 
     public Subject(String name, String info, int duration, ArrayList<UserInfo> participants) {
         this.name = name;
@@ -97,4 +98,12 @@ public class Subject implements Parcelable {
             return new Subject[size];
         }
     };
+
+    public boolean isFreeze() {
+        return freeze;
+    }
+
+    public void setFreeze(boolean freeze) {
+        this.freeze = freeze;
+    }
 }

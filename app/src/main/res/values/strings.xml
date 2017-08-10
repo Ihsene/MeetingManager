@@ -71,4 +71,17 @@
     <string name="next">Next</string>
     <string name="timeLeft">Time Left : </string>
     <string name="nextSubjet">Go To the next Subject</string>
+    <string name="startMeetingCom">Start the meeting ?</string>
+    <string name="startingMeeting">Do you want to start the meeting ?</string>
+    <string name="startM">Start</string>
+    <string name="endMeeting">Finish</string>
+    <string name="leaveMeeting">Leave meeting ?</string>
+    <string name="leaveMeetingCon">Do you want to leave the meeting ?</string>
+    <string name="speedup">Speed up!</string>
+    <string name="fiveminSet">Do you want to set the timer to 5min and alert your contacts ?</string>
+    <string name="endofMeeting">End of the meeting</string>
+    <string name="endofmeetingCon">Do you want to end the meeting ?</string>
+    <string name="editMeetingTitle">Edit your meeting !</string>
+    <string name="update_meeting_url">http://sith-meetings.umons.ac.be:8080/updateMeeting</string>
+    <string name="meetingUpdate">Meeting updated</string>
 </resources>
