@@ -34,6 +34,7 @@ public class UserInfo implements Parcelable {
     private boolean taken;
     private String friend;
     private Meeting meeting;
+    private boolean isHere;
 
     public UserInfo(String name, String familyName, String email, String id, String token, String tokenFire) {
         this.setName(name);
@@ -169,4 +170,12 @@ public class UserInfo implements Parcelable {
             return new UserInfo[size];
         }
     };
+
+    public boolean isHere() {
+        return isHere;
+    }
+
+    public void setHere(boolean here) {
+        isHere = here;
+    }
 }

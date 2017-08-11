@@ -14,9 +14,15 @@ import java.util.Date;
 /*
 
 TODO
-empecher n'importe qui de modifier la réunion d'un autre
-afficher le nom de l'utilisateur dans la page principale
+
 ajouter l'envoi de token au refresh dans la classe FirebaseInstanceIDService
+faire des notifcations plus detailler, notification qui envoi au bon endroit
+mettre des check sur le demarrage réunions
+utiliser alarm pour prevenir qu'une réunion va vommencer avec option dans les options
+regarder pour ajouter des options
+obliger le vpn https://stackoverflow.com/questions/28386553/check-if-a-vpn-connection-is-active-in-android
+envoyé une notification quand la réunion est delete
+ne pas send des notif a un mec qui n'a pas en ami
  */
 
 public class Meeting implements Comparable<Meeting>,Parcelable {
@@ -27,6 +33,9 @@ public class Meeting implements Comparable<Meeting>,Parcelable {
     private Date date;
     private ArrayList<Subject> subjects;
     private boolean update;
+    private int currentIndex;
+    private long currentSubjectTimeLeft;
+    private boolean started;
 
     public Meeting() {
         subjects = new ArrayList<Subject>();
@@ -100,45 +109,6 @@ public class Meeting implements Comparable<Meeting>,Parcelable {
         this.update = update;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(this.id);
-        dest.writeString(this.title);
-        dest.writeString(this.place);
-        dest.writeString(this.dateToSend);
-        dest.writeLong(this.date != null ? this.date.getTime() : -1);
-        dest.writeTypedList(this.subjects);
-        dest.writeByte(this.update ? (byte) 1 : (byte) 0);
-    }
-
-    protected Meeting(Parcel in) {
-        this.id = in.readString();
-        this.title = in.readString();
-        this.place = in.readString();
-        this.dateToSend = in.readString();
-        long tmpDate = in.readLong();
-        this.date = tmpDate == -1 ? null : new Date(tmpDate);
-        this.subjects = in.createTypedArrayList(Subject.CREATOR);
-        this.update = in.readByte() != 0;
-    }
-
-    public static final Parcelable.Creator<Meeting> CREATOR = new Parcelable.Creator<Meeting>() {
-        @Override
-        public Meeting createFromParcel(Parcel source) {
-            return new Meeting(source);
-        }
-
-        @Override
-        public Meeting[] newArray(int size) {
-            return new Meeting[size];
-        }
-    };
-
     public String getMasterName() {
         return masterName;
     }
@@ -154,4 +124,77 @@ public class Meeting implements Comparable<Meeting>,Parcelable {
     public void setMasterID(String masterID) {
         this.masterID = masterID;
     }
+
+    public int getCurrentIndex() {
+        return currentIndex;
+    }
+
+    public void setCurrentIndex(int currentIndex) {
+        this.currentIndex = currentIndex;
+    }
+
+    public long getCurrentSubjectTimeLeft() {
+        return currentSubjectTimeLeft;
+    }
+
+    public void setCurrentSubjectTimeLeft(long currentSubjectTimeLeft) {
+        this.currentSubjectTimeLeft = currentSubjectTimeLeft;
+    }
+
+    public boolean isStarted() {
+        return started;
+    }
+
+    public void setStarted(boolean started) {
+        this.started = started;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.id);
+        dest.writeString(this.masterID);
+        dest.writeString(this.masterName);
+        dest.writeString(this.title);
+        dest.writeString(this.place);
+        dest.writeString(this.dateToSend);
+        dest.writeLong(this.date != null ? this.date.getTime() : -1);
+        dest.writeTypedList(this.subjects);
+        dest.writeByte(this.update ? (byte) 1 : (byte) 0);
+        dest.writeInt(this.currentIndex);
+        dest.writeLong(this.currentSubjectTimeLeft);
+        dest.writeByte(this.started ? (byte) 1 : (byte) 0);
+    }
+
+    protected Meeting(Parcel in) {
+        this.id = in.readString();
+        this.masterID = in.readString();
+        this.masterName = in.readString();
+        this.title = in.readString();
+        this.place = in.readString();
+        this.dateToSend = in.readString();
+        long tmpDate = in.readLong();
+        this.date = tmpDate == -1 ? null : new Date(tmpDate);
+        this.subjects = in.createTypedArrayList(Subject.CREATOR);
+        this.update = in.readByte() != 0;
+        this.currentIndex = in.readInt();
+        this.currentSubjectTimeLeft = in.readLong();
+        this.started = in.readByte() != 0;
+    }
+
+    public static final Parcelable.Creator<Meeting> CREATOR = new Parcelable.Creator<Meeting>() {
+        @Override
+        public Meeting createFromParcel(Parcel source) {
+            return new Meeting(source);
+        }
+
+        @Override
+        public Meeting[] newArray(int size) {
+            return new Meeting[size];
+        }
+    };
 }

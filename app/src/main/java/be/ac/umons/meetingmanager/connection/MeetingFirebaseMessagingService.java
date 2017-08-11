@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
@@ -14,14 +15,10 @@ import com.google.firebase.messaging.RemoteMessage;
 
 import be.ac.umons.meetingmanager.MainActivity;
 import be.ac.umons.meetingmanager.R;
+import be.ac.umons.meetingmanager.meeting.ActivityReceiver;
+import be.ac.umons.meetingmanager.meeting.Meeting;
+import be.ac.umons.meetingmanager.meeting.activities.MeetingActivity;
 
-/**
- * An {@link IntentService} subclass for handling asynchronous task requests in
- * a service on a separate handler thread.
- * <p>
- * TODO: Customize class - update intent actions, extra parameters and static
- * helper methods.
- */
 public class MeetingFirebaseMessagingService extends FirebaseMessagingService {
 
     private static final String TAG = "FirebaseMsgService";
@@ -37,6 +34,15 @@ public class MeetingFirebaseMessagingService extends FirebaseMessagingService {
         if (remoteMessage.getData().size() > 0) {
             Log.d(TAG, "Message data payload: " + remoteMessage.getData());
 
+            Intent localMessage = new Intent(ActivityReceiver.CURRENT_ACTIVITY_ACTION);
+            localMessage.putExtra("user", remoteMessage.getData().get("user"));
+            localMessage.putExtra("userId", remoteMessage.getData().get("userId"));
+            localMessage.putExtra("modif", remoteMessage.getData().get("modif"));
+            localMessage.putExtra("timeLeft", remoteMessage.getData().get("timeLeft"));
+            localMessage.putExtra("currentIndex", remoteMessage.getData().get("currentIndex"));
+            localMessage.putExtra("presence", remoteMessage.getData().get("presence"));
+            localMessage.putExtra("started", remoteMessage.getData().get("meetStarted"));
+            LocalBroadcastManager.getInstance(this).sendBroadcast(localMessage);
 
         }
 
@@ -44,7 +50,6 @@ public class MeetingFirebaseMessagingService extends FirebaseMessagingService {
         if (remoteMessage.getNotification() != null) {
             Log.d(TAG, "Message Notification Body: " + remoteMessage.getNotification().getBody());
             sendNotification(remoteMessage.getNotification().getBody());
-
         }
     }
 

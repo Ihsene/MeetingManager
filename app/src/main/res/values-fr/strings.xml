@@ -46,7 +46,7 @@
     <string name="next">Suivant</string>
     <string name="timeLeft">Temps restant : </string>
     <string name="nextSubjet"></string>
-    <string name="startMeetingCom">Démarrer la réunion ?</string>
+    <string name="startMeetingCom">Démarrer la réunion</string>
     <string name="startingMeeting">Voulez vous démarrer la réunion?</string>
     <string name="startM">Démarrer</string>
     <string name="endMeeting">Terminer</string>
@@ -73,4 +73,8 @@
     <string name="oneFriendError">Vous devez séléctionner au moins un ami!</string>
     <string name="noFriendsOption">Tu n\'as pas d\'amis ! Va dans les options pour en rajouter !</string>
     <string name="meetingEdited">Meeting edited!</string>
+    <string name="joinMeet">Rejoindre la réunion</string>
+    <string name="joinMeetingCom">Voulez vous rejoindre la réunion?</string>
+    <string name="masterLeave">Le maitre est parti !</string>
+    <string name="meetingEnd">La réunion est terminé</string>
 </resources>

@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -55,6 +56,12 @@ public class UserAdapter extends ArrayAdapter<UserInfo> {
 
                 }
             });
+        }
+
+        if(resource == R.layout.layout_presence_member)
+        {
+            ImageButton imageButton = (ImageButton) convertView.findViewById(R.id.presence);
+            imageButton.setImageResource(friends.get(position).isHere()? android.R.drawable.checkbox_on_background : android.R.drawable.ic_delete);
         }
         return convertView;
     }

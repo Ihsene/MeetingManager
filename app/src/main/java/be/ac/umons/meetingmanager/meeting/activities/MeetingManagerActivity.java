@@ -130,10 +130,13 @@ public class MeetingManagerActivity extends AppCompatActivity {
     }
 
     public void showComfirmation(final Meeting meeting) {
+        UserInfo user = UserInfo.getUserInfoFromCache(this);
+        boolean start = meeting.getMasterID().equals(user.getId());
         AlertDialog.Builder builder = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ?
                 new AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert):
                 new AlertDialog.Builder(this);
-        builder.setTitle(R.string.startMeetingCom).setMessage(R.string.startingMeeting)
+        builder.setTitle(start? getString(R.string.startMeetingCom):getString(R.string.joinMeet))
+                .setMessage(start? getText(R.string.startingMeeting):getString(R.string.joinMeetingCom))
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         try {
@@ -170,6 +173,7 @@ public class MeetingManagerActivity extends AppCompatActivity {
                                     new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(response.getJSONObject(0).getJSONObject("meeting").getString("MDATE"))
                                     , new ArrayList<Subject>());
                             meeting.setId(response.getJSONObject(0).getJSONObject("meeting").getString("ID"));
+                            meeting.setMasterID(response.getJSONObject(0).getJSONObject("meeting").getString("MASTER_ID"));
                             Subject subject;
                             for(int i = 0; i < response.getJSONObject(1).getJSONArray("subjects").length(); i++)
                             {

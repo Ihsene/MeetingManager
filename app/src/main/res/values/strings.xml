@@ -71,7 +71,7 @@
     <string name="next">Next</string>
     <string name="timeLeft">Time Left : </string>
     <string name="nextSubjet">Go To the next Subject</string>
-    <string name="startMeetingCom">Start the meeting ?</string>
+    <string name="startMeetingCom">Start the meeting</string>
     <string name="startingMeeting">Do you want to start the meeting ?</string>
     <string name="startM">Start</string>
     <string name="endMeeting">Finish</string>
@@ -101,4 +101,11 @@
     <string name="oneFriendError">You have to select at least one friend!</string>
     <string name="noFriendsOption">You have no friends ! Go to option to add yours friends !</string>
     <string name="meetingEdited">Meeting edited!</string>
+    <string name="send_noti_url">http://sith-meetings.umons.ac.be:8080/sendNotification</string>
+    <string name="send_noti_sub_url">http://sith-meetings.umons.ac.be:8080/sendNotificationSuject</string>
+    <string name="joinMeet">Join the meeting</string>
+    <string name="joinMeetingCom">Do you want to join the meeting ?</string>
+    <string name="meeting_info_url">http://sith-meetings.umons.ac.be:8080/sendMeetingInfo</string>
+    <string name="masterLeave">The master has leave</string>
+    <string name="meetingEnd">Meeting is ended</string>
 </resources>

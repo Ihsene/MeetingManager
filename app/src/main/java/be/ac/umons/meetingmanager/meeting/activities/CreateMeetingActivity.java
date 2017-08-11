@@ -235,35 +235,13 @@ public class CreateMeetingActivity extends AppCompatActivity implements DatePick
 
     public void handleSaveMeeting() throws JSONException {
 
-        boolean ok = true;
-
-        if(name.getText().toString().isEmpty()) {
-            ok = false;
-            name.setError(getString(R.string.nameMeetingError));
-        }
-        if(location.getText().toString().isEmpty()) {
-            ok = false;
-            location.setError(getString(R.string.locationMeetingError));
-        }
-        if(date.getText().toString().isEmpty()) {
-            ok = false;
-            date.setError(getString(R.string.pickDate));
-        }
-        if(meeting.getSubjects().size() == 0)
-        {
-            ok = false;
-            Toast.makeText(CreateMeetingActivity.this, R.string.oneSubj, Toast.LENGTH_LONG).show();
-        }
-
-        if(!ok)
-            return;
-
         UserInfo user = UserInfo.getUserInfoFromCache(this);
         user.setMeeting(meeting);
         Gson gson  = new GsonBuilder().excludeFieldsWithModifiers(java.lang.reflect.Modifier.TRANSIENT).create();
 
         if(editWhileMeeting)
         {
+            meeting.setUpdate(true);
             JsonObjectRequest req = new JsonObjectRequest(Request.Method.POST,getString(R.string.update_meeting_url), new JSONObject(gson.toJson(user)),
                     new Response.Listener<JSONObject>() {
                         @Override
@@ -283,6 +261,30 @@ public class CreateMeetingActivity extends AppCompatActivity implements DatePick
             VolleyConnection.getInstance(getApplicationContext()).addToRequestQueue(req);
         }else
         {
+            boolean ok = true;
+
+            if(name.getText().toString().isEmpty()) {
+                ok = false;
+                name.setError(getString(R.string.nameMeetingError));
+            }
+            if(location.getText().toString().isEmpty()) {
+                ok = false;
+                location.setError(getString(R.string.locationMeetingError));
+            }
+            if(date.getText().toString().isEmpty()) {
+                ok = false;
+                date.setError(getString(R.string.pickDate));
+            }
+
+            if(meeting.getSubjects().size() == 0)
+            {
+                ok = false;
+                Toast.makeText(CreateMeetingActivity.this, R.string.oneSubj, Toast.LENGTH_LONG).show();
+            }
+
+            if(!ok)
+                return;
+
             meeting.setTitle(name.getText().toString());
             meeting.setPlace(location.getText().toString());
             user.getMeeting().setDateToSend(new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(user.getMeeting().getDate()));
