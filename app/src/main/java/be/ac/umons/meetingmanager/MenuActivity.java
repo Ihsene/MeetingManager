@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 import be.ac.umons.meetingmanager.meeting.activities.MeetingManagerActivity;
 import be.ac.umons.meetingmanager.options.OptionActivity;
@@ -36,6 +37,7 @@ public class MenuActivity extends AppCompatActivity {
         editor.commit();
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
+        Toast.makeText(MenuActivity.this, R.string.goodbye, Toast.LENGTH_LONG).show();
         finish();
     }
 }

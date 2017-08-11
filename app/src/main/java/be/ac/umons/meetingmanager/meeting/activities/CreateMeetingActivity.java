@@ -59,7 +59,7 @@ public class CreateMeetingActivity extends AppCompatActivity implements DatePick
     private Gson gson;
     private UserInfo user;
 
-    //Dialog
+    //&g
     private DialogSubjet dialog;
     private boolean editWhileMeeting = false;
 
@@ -196,7 +196,7 @@ public class CreateMeetingActivity extends AppCompatActivity implements DatePick
                                 user = new UserInfo(response.getJSONObject(i).getString("FIRST_NAME"),
                                         response.getJSONObject(i).getString("LAST_NAME"),
                                         response.getJSONObject(i).getString("EMAIL"),"",
-                                        "");
+                                        "","");
                                 friends.add(user);
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -235,6 +235,29 @@ public class CreateMeetingActivity extends AppCompatActivity implements DatePick
 
     public void handleSaveMeeting() throws JSONException {
 
+        boolean ok = true;
+
+        if(name.getText().toString().isEmpty()) {
+            ok = false;
+            name.setError(getString(R.string.nameMeetingError));
+        }
+        if(location.getText().toString().isEmpty()) {
+            ok = false;
+            location.setError(getString(R.string.locationMeetingError));
+        }
+        if(date.getText().toString().isEmpty()) {
+            ok = false;
+            date.setError(getString(R.string.pickDate));
+        }
+        if(meeting.getSubjects().size() == 0)
+        {
+            ok = false;
+            Toast.makeText(CreateMeetingActivity.this, R.string.oneSubj, Toast.LENGTH_LONG).show();
+        }
+
+        if(!ok)
+            return;
+
         UserInfo user = UserInfo.getUserInfoFromCache(this);
         user.setMeeting(meeting);
         Gson gson  = new GsonBuilder().excludeFieldsWithModifiers(java.lang.reflect.Modifier.TRANSIENT).create();
@@ -263,13 +286,14 @@ public class CreateMeetingActivity extends AppCompatActivity implements DatePick
             meeting.setTitle(name.getText().toString());
             meeting.setPlace(location.getText().toString());
             user.getMeeting().setDateToSend(new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(user.getMeeting().getDate()));
+            user.getMeeting().setUpdate(getIntent().getExtras() != null);
             if(getIntent().getExtras() != null)
                 handleRemoveMeetingFromDB(meeting, getApplicationContext());
             JsonObjectRequest req = new JsonObjectRequest(Request.Method.POST,(String) getText(R.string.create_meeting_url), new JSONObject(gson.toJson(user)),
                     new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
-                            Toast.makeText(CreateMeetingActivity.this, R.string.meetingCreated, Toast.LENGTH_LONG).show();
+                            Toast.makeText(CreateMeetingActivity.this, getIntent().getExtras() != null? getString(R.string.meetingEdited) : getString(R.string.meetingCreated), Toast.LENGTH_LONG).show();
                             finish();
                         }
                     }, new Response.ErrorListener() {

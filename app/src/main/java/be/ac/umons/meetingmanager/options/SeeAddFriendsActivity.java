@@ -14,6 +14,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,6 +46,7 @@ public class SeeAddFriendsActivity extends AppCompatActivity {
     private TextView noFriends;
     private UserAdapter adapter;
     private ArrayList<UserInfo> friends;
+    private ProgressBar progressBar;
     private Gson gson;
 
     @Override
@@ -55,8 +57,11 @@ public class SeeAddFriendsActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         noFriends = (TextView) findViewById(R.id.noFriendsTextView);
+        noFriends.setVisibility(View.INVISIBLE);
         user = UserInfo.getUserInfoFromCache(this);
         gson = new GsonBuilder().excludeFieldsWithModifiers(java.lang.reflect.Modifier.TRANSIENT).create();
+        progressBar = (ProgressBar) findViewById(R.id.progressBar2);
+        progressBar.setVisibility(View.VISIBLE);
 
 
         dialog = new Dialog(this);
@@ -138,13 +143,13 @@ public class SeeAddFriendsActivity extends AppCompatActivity {
                 }).setIcon(android.R.drawable.ic_dialog_alert).show();
     }
 
-    public void handleRemoveFriendFromDB(UserInfo friend) throws JSONException {
+    public void handleRemoveFriendFromDB(final UserInfo friend) throws JSONException {
         user.setFriend(friend.getEmail());
         JsonObjectRequest req = new JsonObjectRequest(Request.Method.POST,(String) getText(R.string.remove_friend_url), new JSONObject(gson.toJson(user)),
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-
+                        Toast.makeText(SeeAddFriendsActivity.this, friend.getName()+" "+friend.getFamilyName()+" "+getString(R.string.friendsRemoved), Toast.LENGTH_LONG).show();
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -166,20 +171,20 @@ public class SeeAddFriendsActivity extends AppCompatActivity {
                         try {
                             friend = new UserInfo(response.getString("FIRST_NAME"),response.getString("LAST_NAME"),
                                     response.getString("EMAIL"),"",
-                                    "");
+                                    "","");
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-
                         friends.add(friend);
                         adapter.notifyDataSetChanged();
                         noFriends.setVisibility(friends.size() == 0 ? View.VISIBLE: View.INVISIBLE);
                         listViewParticipant.setVisibility(friends.size() != 0 ? View.VISIBLE: View.INVISIBLE);
+                        Toast.makeText(SeeAddFriendsActivity.this, friend.getName()+" "+friend.getFamilyName()+" "+getString(R.string.addfriendToast), Toast.LENGTH_LONG).show();
                     }
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(SeeAddFriendsActivity.this, error.toString(), Toast.LENGTH_LONG).show();
+                Toast.makeText(SeeAddFriendsActivity.this, user.getFriend()+" "+getString(R.string.dontExist), Toast.LENGTH_LONG).show();
             }
         });
         req.setRetryPolicy(new DefaultRetryPolicy(0, DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
@@ -200,12 +205,13 @@ public class SeeAddFriendsActivity extends AppCompatActivity {
                             try {
                                 user = new UserInfo(response.getJSONObject(i).getString("FIRST_NAME"),response.getJSONObject(i).getString("LAST_NAME"),
                                         response.getJSONObject(i).getString("EMAIL"),"",
-                                        "");
+                                        "","");
                                 friends.add(user);
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
                         }
+                        progressBar.setVisibility(View.INVISIBLE);
                         adapter.notifyDataSetChanged();
                         noFriends.setVisibility(friends.size() == 0 ? View.VISIBLE: View.INVISIBLE);
                         listViewParticipant.setVisibility(friends.size() != 0 ? View.VISIBLE: View.INVISIBLE);

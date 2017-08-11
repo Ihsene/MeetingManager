@@ -9,9 +9,12 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
@@ -44,7 +47,9 @@ public class MeetingManagerActivity extends AppCompatActivity {
     private MeetingAdapter adapter;
     private ArrayList<Meeting> meetings;
     private ListView listView;
-
+    private ProgressBar progressBar;
+    private TextView textViewNoMeeting;
+    private UserInfo user;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,6 +57,13 @@ public class MeetingManagerActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         setTitle(R.string.meetingListTitle);
+        user = UserInfo.getUserInfoFromCache(this);
+
+        textViewNoMeeting = (TextView) findViewById(R.id.coucou);
+        textViewNoMeeting.setVisibility(View.INVISIBLE);
+        progressBar = (ProgressBar) findViewById(R.id.progressBar2);
+        progressBar.setVisibility(View.VISIBLE);
+
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -88,19 +100,26 @@ public class MeetingManagerActivity extends AppCompatActivity {
             listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
                 @Override
                 public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-                    handleActionDelete((Meeting) adapterView.getItemAtPosition(i),i);
-                    return true;
+                    Meeting meeting = (Meeting) adapterView.getItemAtPosition(i);
+                    if(meeting.getMasterID().equals(user.getId()))
+                    {
+                        handleActionDelete(meeting,i);
+                        return true;
+                    }
+                    return  false;
                 }
             });
         }
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Meeting meeting = (Meeting) adapterView.getItemAtPosition(i);
                 if(getIntent().getExtras() != null && getIntent().getExtras().getBoolean("join"))
-                    showComfirmation((Meeting) adapterView.getItemAtPosition(i));
+                    showComfirmation(meeting);
                 else {
                     try {
-                        loadMeeting((Meeting) adapterView.getItemAtPosition(i));
+                        if(meeting.getMasterID().equals(user.getId()))
+                            loadMeeting(meeting);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -165,7 +184,7 @@ public class MeetingManagerActivity extends AppCompatActivity {
                                         subject.getParticipants().add(new UserInfo(response.getJSONObject(2).getJSONArray("participants").getJSONObject(j).getString("FIRST_NAME"),
                                                 response.getJSONObject(2).getJSONArray("participants").getJSONObject(j).getString("LAST_NAME"),
                                                 response.getJSONObject(2).getJSONArray("participants").getJSONObject(j).getString("EMAIL"),
-                                                "",""));
+                                                "","",""));
                                 meeting.getSubjects().add(subject);
                             }
 
@@ -200,6 +219,8 @@ public class MeetingManagerActivity extends AppCompatActivity {
                             e.printStackTrace();
                         }
                         meetings.remove(i);
+                        textViewNoMeeting.setVisibility(meetings.size() == 0 ? View.VISIBLE: View.INVISIBLE);
+                        listView.setVisibility(meetings.size() != 0 ? View.VISIBLE: View.INVISIBLE);
                         adapter.notifyDataSetChanged();
                     }
                 })
@@ -218,7 +239,6 @@ public class MeetingManagerActivity extends AppCompatActivity {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -242,6 +262,7 @@ public class MeetingManagerActivity extends AppCompatActivity {
                     Meeting meeting;
                     @Override
                     public void onResponse(JSONArray response) {
+                        progressBar.setVisibility(View.INVISIBLE);
                         for(int i = 0; i < response.length(); i++)
                         {
                             try {
@@ -250,6 +271,9 @@ public class MeetingManagerActivity extends AppCompatActivity {
                                         new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(response
                                                 .getJSONObject(i).getString("MDATE")), null);
                                 meeting.setId(response.getJSONObject(i).getString("ID"));
+                                meeting.setMasterName(response.getJSONObject(i).getString("FIRST_NAME")+
+                                        response.getJSONObject(i).getString("LAST_NAME"));
+                                meeting.setMasterID(response.getJSONObject(i).getString("MASTER_ID"));
                                 meetings.add(meeting);
                                 Collections.sort(meetings);
                                 adapter.notifyDataSetChanged();
@@ -259,6 +283,8 @@ public class MeetingManagerActivity extends AppCompatActivity {
                                 e.printStackTrace();
                             }
                         }
+                        textViewNoMeeting.setVisibility(meetings.size() == 0 ? View.VISIBLE: View.INVISIBLE);
+                        listView.setVisibility(meetings.size() != 0 ? View.VISIBLE: View.INVISIBLE);
                     }
                 }, new Response.ErrorListener() {
             @Override

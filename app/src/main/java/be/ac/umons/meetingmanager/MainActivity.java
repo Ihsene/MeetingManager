@@ -17,8 +17,11 @@ import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -88,7 +91,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void onSucessLogin(GoogleSignInResult result) throws JSONException {
         final GoogleSignInAccount acct = result.getSignInAccount();
-        user = new UserInfo(acct.getGivenName(), acct.getFamilyName(), acct.getEmail(), acct.getId(), acct.getIdToken());
+        user = new UserInfo(acct.getGivenName(), acct.getFamilyName(), acct.getEmail(), acct.getId(), acct.getIdToken(), FirebaseInstanceId.getInstance().getToken());
         Gson gson  = new GsonBuilder().excludeFieldsWithModifiers(java.lang.reflect.Modifier.TRANSIENT).create();
         JsonObjectRequest req = new JsonObjectRequest(Request.Method.POST,(String) getText(R.string.login_url), new JSONObject(gson.toJson(user)),
                 new Response.Listener<JSONObject>() {
@@ -125,9 +128,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             editor.putString(getString(R.string.email), user.getEmail());
             editor.putString(getString(R.string.accountID), user.getId());
             editor.putString(getString(R.string.accountToken), user.getToken());
+            editor.putString("tokenFire", user.getTokenFire());
             editor.commit();
 
         }
+        Toast.makeText(MainActivity.this, getString(R.string.welcome)+" "+user.getName()+" "+user.getFamilyName()+" !", Toast.LENGTH_LONG).show();
         Intent intent = new Intent(this, MenuActivity.class);
         startActivity(intent);
         finish();

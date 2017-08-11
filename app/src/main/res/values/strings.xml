@@ -84,4 +84,21 @@
     <string name="editMeetingTitle">Edit your meeting !</string>
     <string name="update_meeting_url">http://sith-meetings.umons.ac.be:8080/updateMeeting</string>
     <string name="meetingUpdate">Meeting updated</string>
+    <string name="tokenFire">tokenFire</string>
+    <string name="friendsRemoved">removed</string>
+    <string name="addfriendToast">added</string>
+    <string name="welcome">Welcome </string>
+    <string name="goodbye">Good bye, see you soon!</string>
+    <string name="nameUpdate">Modifications saved !</string>
+    <string name="dontExist">don\'t exist or already your friend</string>
+    <string name="noMeetings">You have no meetings</string>
+    <string name="nameMeetingError">You have to give a name for your meeting!</string>
+    <string name="locationMeetingError">You have to give a location for your meeting!</string>
+    <string name="pickDate">You have to pick a date!</string>
+    <string name="oneSubj">You have to add at least one subject</string>
+    <string name="nameSubError">You have to give a name for your subject!</string>
+    <string name="test">couycou</string>
+    <string name="oneFriendError">You have to select at least one friend!</string>
+    <string name="noFriendsOption">You have no friends ! Go to option to add yours friends !</string>
+    <string name="meetingEdited">Meeting edited!</string>
 </resources>

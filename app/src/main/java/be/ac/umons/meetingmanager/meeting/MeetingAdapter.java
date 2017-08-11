@@ -40,7 +40,7 @@ public class MeetingAdapter extends ArrayAdapter<Meeting> {
         TextView date =  (TextView) convertView.findViewById(R.id.textViewDate);
 
 
-        name.setText(meetings.get(position).getTitle());
+        name.setText(meetings.get(position).getMasterName()+" : "+meetings.get(position).getTitle());
         place.setText(meetings.get(position).getPlace());
         date.setText(new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(meetings.get(position).getDate()));
         return convertView;

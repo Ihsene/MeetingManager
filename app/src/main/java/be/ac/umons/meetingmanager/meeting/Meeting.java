@@ -11,11 +11,22 @@ import java.util.Date;
  * Created by SogeP on 02-08-17.
  */
 
-public class Meeting implements Parcelable, Comparable<Meeting> {
+/*
+
+TODO
+empecher n'importe qui de modifier la réunion d'un autre
+afficher le nom de l'utilisateur dans la page principale
+ajouter l'envoi de token au refresh dans la classe FirebaseInstanceIDService
+ */
+
+public class Meeting implements Comparable<Meeting>,Parcelable {
     private String id;
+    private String masterID;
+    private String masterName;
     private String title, place, dateToSend;
     private Date date;
     private ArrayList<Subject> subjects;
+    private boolean update;
 
     public Meeting() {
         subjects = new ArrayList<Subject>();
@@ -77,6 +88,19 @@ public class Meeting implements Parcelable, Comparable<Meeting> {
     }
 
     @Override
+    public int compareTo(@NonNull Meeting meeting) {
+        return getDate().compareTo(meeting.getDate());
+    }
+
+    public boolean isUpdate() {
+        return update;
+    }
+
+    public void setUpdate(boolean update) {
+        this.update = update;
+    }
+
+    @Override
     public int describeContents() {
         return 0;
     }
@@ -89,6 +113,7 @@ public class Meeting implements Parcelable, Comparable<Meeting> {
         dest.writeString(this.dateToSend);
         dest.writeLong(this.date != null ? this.date.getTime() : -1);
         dest.writeTypedList(this.subjects);
+        dest.writeByte(this.update ? (byte) 1 : (byte) 0);
     }
 
     protected Meeting(Parcel in) {
@@ -99,6 +124,7 @@ public class Meeting implements Parcelable, Comparable<Meeting> {
         long tmpDate = in.readLong();
         this.date = tmpDate == -1 ? null : new Date(tmpDate);
         this.subjects = in.createTypedArrayList(Subject.CREATOR);
+        this.update = in.readByte() != 0;
     }
 
     public static final Parcelable.Creator<Meeting> CREATOR = new Parcelable.Creator<Meeting>() {
@@ -113,8 +139,19 @@ public class Meeting implements Parcelable, Comparable<Meeting> {
         }
     };
 
-    @Override
-    public int compareTo(@NonNull Meeting meeting) {
-        return getDate().compareTo(meeting.getDate());
+    public String getMasterName() {
+        return masterName;
+    }
+
+    public void setMasterName(String masterName) {
+        this.masterName = masterName;
+    }
+
+    public String getMasterID() {
+        return masterID;
+    }
+
+    public void setMasterID(String masterID) {
+        this.masterID = masterID;
     }
 }

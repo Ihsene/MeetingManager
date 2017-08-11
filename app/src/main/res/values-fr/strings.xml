@@ -58,4 +58,19 @@
     <string name="endofmeetingCon">Voulez vous terminer la réunion ?</string>
     <string name="editMeetingTitle">Modifier votre réunion !</string>
     <string name="meetingUpdate">Réunion mise à jour</string>
+    <string name="friendsRemoved">supprimé</string>
+    <string name="addfriendToast">ajouté</string>
+    <string name="welcome">Bienvenue</string>
+    <string name="goodbye">A bientôt !</string>
+    <string name="nameUpdate">Modifications enregistrées</string>
+    <string name="dontExist">n\'existe pas ou est déja votre ami</string>
+    <string name="noMeetings">Tu n\'as aucune réunions</string>
+    <string name="nameMeetingError">Vous devez introduire un nom pour la réunion!</string>
+    <string name="locationMeetingError">Vous devez introduire un emplacement pour la réunion!</string>
+    <string name="pickDate">Vous devez choisir une date!</string>
+    <string name="oneSubj">Vous devez ajouter au moins un sujet!</string>
+    <string name="nameSubError">Vous devez fournir un nom pour votre sujet!</string>
+    <string name="oneFriendError">Vous devez séléctionner au moins un ami!</string>
+    <string name="noFriendsOption">Tu n\'as pas d\'amis ! Va dans les options pour en rajouter !</string>
+    <string name="meetingEdited">Meeting edited!</string>
 </resources>

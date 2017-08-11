@@ -67,7 +67,7 @@ public class OptionActivity extends AppCompatActivity {
                         new Response.Listener<JSONObject>() {
                             @Override
                             public void onResponse(JSONObject response) {
-
+                                Toast.makeText(OptionActivity.this, R.string.nameUpdate, Toast.LENGTH_LONG).show();
                             }
                         }, new Response.ErrorListener() {
                     @Override

@@ -30,17 +30,18 @@ public class UserInfo implements Parcelable {
     private String familyName;
     private String email;
     private String id;
-    private String token;
+    private String token, tokenFire;
     private boolean taken;
     private String friend;
     private Meeting meeting;
 
-    public UserInfo(String name, String familyName, String email, String id, String token) {
+    public UserInfo(String name, String familyName, String email, String id, String token, String tokenFire) {
         this.setName(name);
         this.setFamilyName(familyName);
         this.setEmail(email);
         this.setId(id);
         this.setToken(token);
+        this.setTokenFire(tokenFire);
     }
 
     public static UserInfo getUserInfoFromCache(Context c) {
@@ -50,7 +51,8 @@ public class UserInfo implements Parcelable {
                 sharedPreferences.getString(c.getString(R.string.familyName),""),
                 sharedPreferences.getString(c.getString(R.string.email),""),
                 sharedPreferences.getString(c.getString(R.string.accountID),""),
-                sharedPreferences.getString(c.getString(R.string.accountToken),""));
+                sharedPreferences.getString(c.getString(R.string.accountToken),""),
+                sharedPreferences.getString(c.getString(R.string.tokenFire),""));
         return  user;
     }
 
@@ -118,6 +120,14 @@ public class UserInfo implements Parcelable {
         this.meeting = meeting;
     }
 
+    public String getTokenFire() {
+        return tokenFire;
+    }
+
+    public void setTokenFire(String tokenFire) {
+        this.tokenFire = tokenFire;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -130,6 +140,7 @@ public class UserInfo implements Parcelable {
         dest.writeString(this.email);
         dest.writeString(this.id);
         dest.writeString(this.token);
+        dest.writeString(this.tokenFire);
         dest.writeByte(this.taken ? (byte) 1 : (byte) 0);
         dest.writeString(this.friend);
         dest.writeParcelable(this.meeting, flags);
@@ -141,6 +152,7 @@ public class UserInfo implements Parcelable {
         this.email = in.readString();
         this.id = in.readString();
         this.token = in.readString();
+        this.tokenFire = in.readString();
         this.taken = in.readByte() != 0;
         this.friend = in.readString();
         this.meeting = in.readParcelable(Meeting.class.getClassLoader());
