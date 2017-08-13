@@ -2,12 +2,15 @@ package be.ac.umons.meetingmanager.meeting.activities;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -34,10 +37,13 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 import be.ac.umons.meetingmanager.R;
 import be.ac.umons.meetingmanager.connection.UserInfo;
 import be.ac.umons.meetingmanager.connection.VolleyConnection;
+import be.ac.umons.meetingmanager.meeting.AlarmBroadcastReceive;
+import be.ac.umons.meetingmanager.meeting.AlarmNotification;
 import be.ac.umons.meetingmanager.meeting.Meeting;
 import be.ac.umons.meetingmanager.meeting.Subject;
 import be.ac.umons.meetingmanager.meeting.SubjectAdapter;
@@ -287,14 +293,20 @@ public class CreateMeetingActivity extends AppCompatActivity implements DatePick
 
             meeting.setTitle(name.getText().toString());
             meeting.setPlace(location.getText().toString());
-            user.getMeeting().setDateToSend(new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(user.getMeeting().getDate()));
+            final Date date = user.getMeeting().getDate();
+            user.getMeeting().setDateToSend(new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date));
             user.getMeeting().setUpdate(getIntent().getExtras() != null);
             if(getIntent().getExtras() != null)
-                handleRemoveMeetingFromDB(meeting, getApplicationContext());
+                handleRemoveMeetingFromDB(meeting, getApplicationContext(), true, getSharedPreferences(getString(R.string.setting), this.MODE_PRIVATE));
             JsonObjectRequest req = new JsonObjectRequest(Request.Method.POST,(String) getText(R.string.create_meeting_url), new JSONObject(gson.toJson(user)),
                     new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
+                            try {
+                                setAlarm(true, getApplicationContext(), Integer.parseInt(response.getString("meetingID")), date, meeting, getSharedPreferences(getString(R.string.setting), getApplicationContext().MODE_PRIVATE));
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
                             Toast.makeText(CreateMeetingActivity.this, getIntent().getExtras() != null? getString(R.string.meetingEdited) : getString(R.string.meetingCreated), Toast.LENGTH_LONG).show();
                             finish();
                         }
@@ -306,6 +318,26 @@ public class CreateMeetingActivity extends AppCompatActivity implements DatePick
             });
             VolleyConnection.getInstance(getApplicationContext()).addToRequestQueue(req);
         }
+    }
+
+    public static void setAlarm(boolean on, Context c, int id, Date date, Meeting meeting, SharedPreferences sharedPreferences) {
+        Intent intent = new Intent(c, AlarmBroadcastReceive.class);
+        intent.putExtra("id", id);
+        if(on)
+        {
+            if(date.after(new Date()))
+            {
+                int[] pref = {Calendar.SECOND, Calendar.MINUTE, Calendar.DAY_OF_WEEK};
+                intent.putExtra("meeting", meeting.getTitle());
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(date);
+                calendar.add(pref[sharedPreferences.getInt("pref", 0)], -sharedPreferences.getInt("delay", 5));
+                Log.d("mmm","test : "+calendar.getTime());
+                AlarmNotification.addAlarm(c, intent, id, calendar);
+            }
+
+        }else
+            AlarmNotification.cancelAlarm(c,intent, id);
     }
 
     public void actionButton(View view) {

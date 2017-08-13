@@ -2,10 +2,13 @@ package be.ac.umons.meetingmanager.options;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.icu.util.Calendar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -18,13 +21,16 @@ import com.google.gson.GsonBuilder;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Array;
+
 import be.ac.umons.meetingmanager.R;
 import be.ac.umons.meetingmanager.connection.UserInfo;
 import be.ac.umons.meetingmanager.connection.VolleyConnection;
 
 public class OptionActivity extends AppCompatActivity {
 
-    private EditText firstName, familyName;
+    private EditText firstName, familyName, delay;
+    private Spinner spinner;
     private SharedPreferences sharedPreferences;
     private UserInfo user;
 
@@ -41,6 +47,14 @@ public class OptionActivity extends AppCompatActivity {
         firstName.setText(user.getName());
         familyName = (EditText) findViewById(R.id.familyName);
         familyName.setText(user.getFamilyName());
+
+        delay = (EditText) findViewById(R.id.DelayTime);
+        delay.setText(String.valueOf(sharedPreferences.getInt("delay", 5)));
+        spinner = (Spinner) findViewById(R.id.spinnerTime);
+        String[] pref = new String[] {getString(R.string.minutes),getString(R.string.hours),getString(R.string.days)};
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, pref);
+        spinner.setAdapter(adapter);
+        spinner.setSelection(sharedPreferences.getInt("pref", 0));
     }
 
     public void startFriendsActivity(View view) {
@@ -51,13 +65,13 @@ public class OptionActivity extends AppCompatActivity {
     @Override
     public void onPause() {
         super.onPause();
-
+        SharedPreferences.Editor editor = sharedPreferences.edit();
         if(!firstName.getText().toString().equals(user.getName()) ||
                 !familyName.getText().toString().equals(user.getFamilyName()))
         {
             user.setName(firstName.getText().toString());
             user.setFamilyName(familyName.getText().toString());
-            SharedPreferences.Editor editor = sharedPreferences.edit();
+
             editor.putString(getString(R.string.firstName), firstName.getText().toString());
             editor.putString(getString(R.string.familyName), familyName.getText().toString());
             editor.commit();
@@ -80,5 +94,13 @@ public class OptionActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
+        editor.putInt("pref", spinner.getSelectedItemPosition());
+
+        switch (spinner.getSelectedItemPosition())
+        {
+
+        }
+        editor.putInt("delay", Integer.parseInt(delay.getText().toString()));
+        editor.commit();
     }
 }

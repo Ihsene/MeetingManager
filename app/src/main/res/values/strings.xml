@@ -108,4 +108,10 @@
     <string name="meeting_info_url">http://sith-meetings.umons.ac.be:8080/sendMeetingInfo</string>
     <string name="masterLeave">The master has leave</string>
     <string name="meetingEnd">Meeting is ended</string>
+    <string name="dontforget">Don\'t forget you have to assist to the meeting</string>
+    <string name="delayTextAlert">Alert</string>
+    <string name="notifDelay">Send a notification before a meeting start in</string>
+    <string name="minutes">Minutes</string>
+    <string name="hours">Hours</string>
+    <string name="days">Days</string>
 </resources>

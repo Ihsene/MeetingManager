@@ -3,6 +3,7 @@ package be.ac.umons.meetingmanager.meeting.activities;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -33,14 +34,21 @@ import org.json.JSONObject;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 
 import be.ac.umons.meetingmanager.R;
 import be.ac.umons.meetingmanager.connection.UserInfo;
 import be.ac.umons.meetingmanager.connection.VolleyConnection;
+import be.ac.umons.meetingmanager.meeting.AlarmBroadcastReceive;
+import be.ac.umons.meetingmanager.meeting.AlarmNotification;
 import be.ac.umons.meetingmanager.meeting.Meeting;
 import be.ac.umons.meetingmanager.meeting.MeetingAdapter;
 import be.ac.umons.meetingmanager.meeting.Subject;
+
+import static be.ac.umons.meetingmanager.meeting.AlarmNotification.cancelAllAlarms;
+import static be.ac.umons.meetingmanager.meeting.activities.CreateMeetingActivity.setAlarm;
 
 public class MeetingManagerActivity extends AppCompatActivity {
 
@@ -49,6 +57,7 @@ public class MeetingManagerActivity extends AppCompatActivity {
     private ListView listView;
     private ProgressBar progressBar;
     private TextView textViewNoMeeting;
+    private SharedPreferences sharedPreferences;
     private UserInfo user;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +67,7 @@ public class MeetingManagerActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         setTitle(R.string.meetingListTitle);
         user = UserInfo.getUserInfoFromCache(this);
+        sharedPreferences = getSharedPreferences(getString(R.string.setting), this.MODE_PRIVATE);
 
         textViewNoMeeting = (TextView) findViewById(R.id.coucou);
         textViewNoMeeting.setVisibility(View.INVISIBLE);
@@ -218,7 +228,7 @@ public class MeetingManagerActivity extends AppCompatActivity {
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         try {
-                            handleRemoveMeetingFromDB(meeting, getApplicationContext());
+                            handleRemoveMeetingFromDB(meeting, getApplicationContext(), false, getSharedPreferences(getString(R.string.setting), getApplicationContext().MODE_PRIVATE));
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -235,14 +245,18 @@ public class MeetingManagerActivity extends AppCompatActivity {
                 }).setIcon(android.R.drawable.ic_dialog_alert).show();
     }
 
-    public static void handleRemoveMeetingFromDB(Meeting meeting, final Context c) throws JSONException {
+    public static void handleRemoveMeetingFromDB(Meeting meeting, final Context c, boolean update, SharedPreferences sharedPreferences) throws JSONException {
         UserInfo user = UserInfo.getUserInfoFromCache(c);
         user.setMeeting(meeting);
+        meeting.setUpdate(update);
+        final int id =  Integer.parseInt(meeting.getId());
+        setAlarm(false, c, id, null, user.getMeeting(), sharedPreferences);
         Gson gson = new GsonBuilder().excludeFieldsWithModifiers(java.lang.reflect.Modifier.TRANSIENT).create();
         JsonObjectRequest req = new JsonObjectRequest(Request.Method.POST,(String) c.getText(R.string.remove_meeting_url), new JSONObject(gson.toJson(user)),
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
+
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -267,6 +281,8 @@ public class MeetingManagerActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(JSONArray response) {
                         progressBar.setVisibility(View.INVISIBLE);
+                        Intent intent = new Intent(getApplicationContext(), AlarmBroadcastReceive.class);
+                        cancelAllAlarms(getApplicationContext(), intent);
                         for(int i = 0; i < response.length(); i++)
                         {
                             try {
@@ -279,7 +295,17 @@ public class MeetingManagerActivity extends AppCompatActivity {
                                         response.getJSONObject(i).getString("LAST_NAME"));
                                 meeting.setMasterID(response.getJSONObject(i).getString("MASTER_ID"));
                                 meetings.add(meeting);
-                                Collections.sort(meetings);
+
+                                if(meeting.getDate().after(new Date()))
+                                {
+                                    intent.putExtra("meeting", meeting.getTitle());
+                                    Calendar calendar = Calendar.getInstance();
+                                    calendar.setTime(meeting.getDate());
+                                    int[] pref = {Calendar.MINUTE, Calendar.HOUR, Calendar.DAY_OF_WEEK};
+                                    calendar.add(pref[sharedPreferences.getInt("pref", 0)], -sharedPreferences.getInt("delay", 5));
+                                    Log.d("mmm","test : "+calendar.getTime());
+                                    AlarmNotification.addAlarm(getApplicationContext(), intent, Integer.parseInt(meeting.getId()), calendar);
+                                }
                                 adapter.notifyDataSetChanged();
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -287,6 +313,7 @@ public class MeetingManagerActivity extends AppCompatActivity {
                                 e.printStackTrace();
                             }
                         }
+                        Collections.sort(meetings);
                         textViewNoMeeting.setVisibility(meetings.size() == 0 ? View.VISIBLE: View.INVISIBLE);
                         listView.setVisibility(meetings.size() != 0 ? View.VISIBLE: View.INVISIBLE);
                     }

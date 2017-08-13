@@ -93,7 +93,7 @@ public class MeetingActivity extends AppCompatActivity {
         timerTextView = (TextView) findViewById(R.id.textViewTimer);
         editButton = (Button) findViewById(R.id.buttonEdit);
 
-        editButton.setVisibility(!isMaster ? View.INVISIBLE:View.VISIBLE);
+        editButton.setVisibility(View.INVISIBLE);
         nextButton = (Button) findViewById(R.id.buttonNext);
         nextButton.setText(R.string.startM);
         nextButton.setVisibility(!isMaster ? View.INVISIBLE:View.VISIBLE);
@@ -366,6 +366,10 @@ public class MeetingActivity extends AppCompatActivity {
         if (requestCode == 1 && resultCode == RESULT_OK) {
             Meeting tmp = data.getExtras().getParcelable("meetingM");
             meeting.setSubjects(tmp.getSubjects());
+            for(String itr : presences)
+                registerInAndOutUser(itr,"", true, false);
+            adapter = new UserAdapter(this, meeting.getSubjects().get(currentSujectIndex).getParticipants(), R.layout.layout_presence_member);
+            listView.setAdapter(adapter);
         }
     }
 }

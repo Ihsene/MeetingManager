@@ -7,9 +7,13 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.util.Log;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 
+import be.ac.umons.meetingmanager.meeting.activities.CreateMeetingActivity;
 import be.ac.umons.meetingmanager.meeting.activities.MeetingActivity;
 import be.ac.umons.meetingmanager.meeting.activities.MeetingManagerActivity;
 
@@ -28,7 +32,7 @@ public class ActivityReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        if(intent.getStringExtra("modif").equals("joinFriend") || intent.getStringExtra("modif").equals("leaveFriend"))
+        if((intent.getStringExtra("modif").equals("joinFriend") || intent.getStringExtra("modif").equals("leaveFriend")))
             ((MeetingActivity) activity).registerInAndOutUser(intent.getStringExtra("user"),
                     intent.getStringExtra("userId"), intent.getStringExtra("modif").equals("joinFriend"), true);
         else if(intent.getStringExtra("modif").equals("infoMeeting")) {
@@ -37,5 +41,6 @@ public class ActivityReceiver extends BroadcastReceiver {
                     new ArrayList<>(Arrays.asList(intent.getStringExtra("presence").split(" "))),
                     intent.getStringExtra("started").equals("true"));
         }
+
     }
 }

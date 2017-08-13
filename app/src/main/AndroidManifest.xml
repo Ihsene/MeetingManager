@@ -65,6 +65,7 @@
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
             </intent-filter>
         </service>
+        <receiver android:name=".meeting.AlarmBroadcastReceive" />
     </application>
 
 </manifest>

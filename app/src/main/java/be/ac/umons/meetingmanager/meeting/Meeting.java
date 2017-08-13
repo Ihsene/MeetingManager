@@ -14,15 +14,21 @@ import java.util.Date;
 /*
 
 TODO
+empecher de se connecter a la réunion avant le maitre
+obliger le vpn https://stackoverflow.com/questions/28386553/check-if-a-vpn-connection-is-active-in-android
+permettre de consulter ses réunions
+faire des vrai notification avec du son et tout
 
+
+
+duplication refactoring
+verifier attaque serveur
 ajouter l'envoi de token au refresh dans la classe FirebaseInstanceIDService
 faire des notifcations plus detailler, notification qui envoi au bon endroit
 mettre des check sur le demarrage réunions
-utiliser alarm pour prevenir qu'une réunion va vommencer avec option dans les options
 regarder pour ajouter des options
-obliger le vpn https://stackoverflow.com/questions/28386553/check-if-a-vpn-connection-is-active-in-android
-envoyé une notification quand la réunion est delete
-ne pas send des notif a un mec qui n'a pas en ami
+ne pas send des notif a un mec qui n'a pas en ami, amélioré le systeme d'ami
+quand on change l'option pour prevenir avant une réunion, c'est juste pour les nouvelles réunions que c'est mise a jour
  */
 
 public class Meeting implements Comparable<Meeting>,Parcelable {

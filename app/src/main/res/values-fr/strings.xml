@@ -77,4 +77,10 @@
     <string name="joinMeetingCom">Voulez vous rejoindre la réunion?</string>
     <string name="masterLeave">Le maitre est parti !</string>
     <string name="meetingEnd">La réunion est terminé</string>
+    <string name="dontforget">N\'oublie pas que tu dois assister a la réunion</string>
+    <string name="delayTextAlert">Alerte</string>
+    <string name="notifDelay">Envoyer une notification avant qu\'une réunion commence de</string>
+    <string name="minutes">Minutes</string>
+    <string name="hours">Heures</string>
+    <string name="days">Jours</string>
 </resources>

@@ -42,7 +42,8 @@ public class UserAdapter extends ArrayAdapter<UserInfo> {
         TextView email = (TextView) convertView.findViewById(R.id.textViewEmail);
 
         name.setText(friends.get(position).getName()+" "+friends.get(position).getFamilyName());
-        email.setText(friends.get(position).getEmail());
+        if(email != null)
+            email.setText(friends.get(position).getEmail());
 
         if(resource == R.layout.layout_see_friends)
         {
