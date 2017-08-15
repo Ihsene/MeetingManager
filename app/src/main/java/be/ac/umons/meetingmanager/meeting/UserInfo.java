@@ -1,25 +1,11 @@
-package be.ac.umons.meetingmanager.connection;
+package be.ac.umons.meetingmanager.meeting;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.Arrays;
-import java.util.Set;
-
-import be.ac.umons.meetingmanager.MainActivity;
 import be.ac.umons.meetingmanager.R;
-import be.ac.umons.meetingmanager.meeting.Meeting;
 
 /**
  * Created by SogeP on 27-07-17.

@@ -28,11 +28,11 @@ import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 import be.ac.umons.meetingmanager.R;
-import be.ac.umons.meetingmanager.connection.UserInfo;
+import be.ac.umons.meetingmanager.connection.ActivityReceiver;
 import be.ac.umons.meetingmanager.connection.VolleyConnection;
-import be.ac.umons.meetingmanager.meeting.ActivityReceiver;
 import be.ac.umons.meetingmanager.meeting.Meeting;
-import be.ac.umons.meetingmanager.meeting.UserAdapter;
+import be.ac.umons.meetingmanager.meeting.UserInfo;
+import be.ac.umons.meetingmanager.meeting.adapters.UserAdapter;
 
 public class MeetingActivity extends AppCompatActivity {
 

@@ -5,8 +5,8 @@
     <string name="error_login">Impossible de se connecter</string>
     <string name="conn_error">Problème avec votre compte</string>
     <string name="server_reachability">Problème avec le serveur</string>
-    <string name="buttonJoin">Démarrer/Rejoindre une réunion</string>
-    <string name="buttonCreate">Créer/Modifier une réunion</string>
+    <string name="buttonJoin">Démarrer/Rejoindre</string>
+    <string name="buttonCreate">Consulter/Créer/Modifier</string>
     <string name="buttonLogout">Se déconnecter</string>
     <string name="nameMeeting">Nom</string>
     <string name="locationMeeting">Lieu</string>
@@ -83,4 +83,6 @@
     <string name="minutes">Minutes</string>
     <string name="hours">Heures</string>
     <string name="days">Jours</string>
+    <string name="participants">Les participants</string>
+    <string name="vpn">Vous devez vous connecter sur le VPN de l\'UMONS</string>
 </resources>

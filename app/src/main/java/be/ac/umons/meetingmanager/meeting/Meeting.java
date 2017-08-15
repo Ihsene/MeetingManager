@@ -15,10 +15,6 @@ import java.util.Date;
 
 TODO
 empecher de se connecter a la réunion avant le maitre : Verifier en db quand la réunion a demarré et check
-obliger le vpn https://stackoverflow.com/questions/28386553/check-if-a-vpn-connection-is-active-in-android
-permettre de consulter ses réunions
-faire des vrai notification avec du son et tout
-
 
 
 duplication refactoring

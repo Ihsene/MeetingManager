@@ -1,4 +1,4 @@
-package be.ac.umons.meetingmanager.meeting;
+package be.ac.umons.meetingmanager.connection;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;

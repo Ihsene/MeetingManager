@@ -5,8 +5,6 @@ import android.os.Parcelable;
 
 import java.util.ArrayList;
 
-import be.ac.umons.meetingmanager.connection.UserInfo;
-
 /**
  * Created by SogeP on 02-08-17.
  */

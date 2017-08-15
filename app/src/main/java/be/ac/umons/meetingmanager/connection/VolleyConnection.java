@@ -1,10 +1,23 @@
 package be.ac.umons.meetingmanager.connection;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkCapabilities;
+import android.os.Build;
+import android.util.Log;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
+
+import java.net.NetworkInterface;
+import java.util.ArrayList;
+import java.util.Collections;
+
+import be.ac.umons.meetingmanager.R;
+import be.ac.umons.meetingmanager.options.OptionActivity;
 
 /**
  * Created by SogeP on 26-11-16.
@@ -34,7 +47,24 @@ public class VolleyConnection {
         return requestQueue;
     }
 
+    public boolean checkVPN() {
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Network[] networks = cm.getAllNetworks();
+            for (int i = 0; i < networks.length; i++) {
+                NetworkCapabilities caps = null;
+                caps = cm.getNetworkCapabilities(networks[i]);
+                if (caps.hasTransport(NetworkCapabilities.TRANSPORT_VPN))
+                    return true;
+            }
+        }
+        return false;
+    }
+
     public <T> void addToRequestQueue(Request<T> req) {
-        getRequestQueue().add(req);
+        //if(checkVPN())
+            getRequestQueue().add(req);
+        /*else
+            Toast.makeText(context, R.string.vpn, Toast.LENGTH_LONG).show();*/
     }
 }

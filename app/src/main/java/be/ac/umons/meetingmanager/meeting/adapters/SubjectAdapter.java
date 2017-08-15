@@ -1,8 +1,7 @@
-package be.ac.umons.meetingmanager.meeting;
+package be.ac.umons.meetingmanager.meeting.adapters;
 
 import android.app.Activity;
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +13,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import be.ac.umons.meetingmanager.R;
-import be.ac.umons.meetingmanager.connection.UserInfo;
+import be.ac.umons.meetingmanager.meeting.Subject;
 
 /**
  * Created by SogeP on 04-08-17.
@@ -36,28 +35,32 @@ public class SubjectAdapter extends ArrayAdapter<Subject> {
     public View getView(final int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = ((Activity)context).getLayoutInflater();
         convertView = inflater.inflate(resource, parent, false);
-
         TextView name = (TextView) convertView.findViewById(R.id.textViewSubjetName);
         TextView info = (TextView) convertView.findViewById(R.id.textViewInfo);
-        ImageButton up = (ImageButton) convertView.findViewById(R.id.imageButtonUP);
-        ImageButton down = (ImageButton) convertView.findViewById(R.id.imageButtonDown);
-        down.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                swapAction(position, true);
-            }
-        });
-        up.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                swapAction(position, false);
-            }
-        });
-        if(subjects.get(position).isFreeze())
+
+        if(resource == R.layout.layout_subjet_list)
         {
-            down.setVisibility(View.INVISIBLE);
-            up.setVisibility(View.INVISIBLE);
+            ImageButton up = (ImageButton) convertView.findViewById(R.id.imageButtonUP);
+            ImageButton down = (ImageButton) convertView.findViewById(R.id.imageButtonDown);
+            down.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    swapAction(position, true);
+                }
+            });
+            up.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    swapAction(position, false);
+                }
+            });
+            if(subjects.get(position).isFreeze())
+            {
+                down.setVisibility(View.INVISIBLE);
+                up.setVisibility(View.INVISIBLE);
+            }
         }
+
 
 
         name.setText(subjects.get(position).getName()+" - "+subjects.get(position).getDuration()+" min");

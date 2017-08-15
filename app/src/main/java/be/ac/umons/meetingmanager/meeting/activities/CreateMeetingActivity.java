@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Build;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -17,6 +18,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ExpandableListView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -40,13 +42,13 @@ import java.util.Calendar;
 import java.util.Date;
 
 import be.ac.umons.meetingmanager.R;
-import be.ac.umons.meetingmanager.connection.UserInfo;
+import be.ac.umons.meetingmanager.meeting.UserInfo;
 import be.ac.umons.meetingmanager.connection.VolleyConnection;
-import be.ac.umons.meetingmanager.meeting.AlarmBroadcastReceive;
-import be.ac.umons.meetingmanager.meeting.AlarmNotification;
+import be.ac.umons.meetingmanager.meeting.alarm.AlarmBroadcastReceive;
+import be.ac.umons.meetingmanager.meeting.alarm.AlarmNotification;
 import be.ac.umons.meetingmanager.meeting.Meeting;
 import be.ac.umons.meetingmanager.meeting.Subject;
-import be.ac.umons.meetingmanager.meeting.SubjectAdapter;
+import be.ac.umons.meetingmanager.meeting.adapters.SubjectAdapter;
 
 import static be.ac.umons.meetingmanager.meeting.activities.MeetingManagerActivity.handleRemoveMeetingFromDB;
 
@@ -64,10 +66,10 @@ public class CreateMeetingActivity extends AppCompatActivity implements DatePick
     private SubjectAdapter subjectAdapter;
     private Gson gson;
     private UserInfo user;
-
-    //&g
     private DialogSubjet dialog;
     private boolean editWhileMeeting = false;
+    private boolean isMaster;
+    private ExpandableListView expandableListView;
 
 
 
@@ -87,7 +89,9 @@ public class CreateMeetingActivity extends AppCompatActivity implements DatePick
         int year = calendar.get(Calendar.YEAR), month = calendar.get(Calendar.MONTH),day = calendar.get(Calendar.DAY_OF_MONTH);
         datePickerDialog = new DatePickerDialog(this, CreateMeetingActivity.this, year, month, day);
         user = UserInfo.getUserInfoFromCache(this);
+
         handleEditMeeting();
+        isMaster = meeting.getMasterID() != null ? user.getId().equals(meeting.getMasterID()) : true;
         gson = new GsonBuilder().excludeFieldsWithModifiers(java.lang.reflect.Modifier.TRANSIENT).create();
         try {
             handleGetFriends();
@@ -108,12 +112,32 @@ public class CreateMeetingActivity extends AppCompatActivity implements DatePick
         }
         handleAddSubjectList();
         createDialog();
+        if(!isMaster)
+        {
+            setTitle("Réunion");
+            disableEditText(name);
+            disableEditText(location);
+            setDate.setVisibility(View.GONE);
+            save.setVisibility(View.GONE);
+            Button b = (Button) findViewById(R.id.buttonAddSubjets);
+            b.setVisibility(View.GONE);
+
+        }
+
+    }
+
+    private void disableEditText(EditText editText) {
+        editText.setFocusable(false);
+        editText.setEnabled(false);
+        editText.setCursorVisible(false);
+        editText.setKeyListener(null);
+        editText.setBackgroundColor(Color.TRANSPARENT);
     }
 
 
 
     public  void handleAddSubjectList() {
-        subjectAdapter = new SubjectAdapter(this, meeting.getSubjects(), R.layout.layout_subjet_list);
+        subjectAdapter = new SubjectAdapter(this, meeting.getSubjects(), isMaster ? R.layout.layout_subjet_list: R.layout.layout_see_subject);
         listViewSubjets.setAdapter(subjectAdapter);
         listViewSubjets.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -332,7 +356,6 @@ public class CreateMeetingActivity extends AppCompatActivity implements DatePick
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(date);
                 calendar.add(pref[sharedPreferences.getInt("pref", 0)], -sharedPreferences.getInt("delay", 5));
-                Log.d("mmm","test : "+calendar.getTime());
                 AlarmNotification.addAlarm(c, intent, id, calendar);
             }
 

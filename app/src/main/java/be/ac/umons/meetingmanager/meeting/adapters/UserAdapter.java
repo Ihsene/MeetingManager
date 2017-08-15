@@ -1,4 +1,4 @@
-package be.ac.umons.meetingmanager.meeting;
+package be.ac.umons.meetingmanager.meeting.adapters;
 
 
 import android.app.Activity;
@@ -15,7 +15,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import be.ac.umons.meetingmanager.R;
-import be.ac.umons.meetingmanager.connection.UserInfo;
+import be.ac.umons.meetingmanager.meeting.UserInfo;
 
 /**
  * Created by SogeP on 02-08-17.

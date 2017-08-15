@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -25,12 +24,8 @@ import com.google.gson.GsonBuilder;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Calendar;
-
-import be.ac.umons.meetingmanager.connection.UserInfo;
+import be.ac.umons.meetingmanager.meeting.UserInfo;
 import be.ac.umons.meetingmanager.connection.VolleyConnection;
-import be.ac.umons.meetingmanager.meeting.AlarmBroadcastReceive;
-import be.ac.umons.meetingmanager.meeting.AlarmNotification;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private static final int RC_SIGN_IN = 1234;

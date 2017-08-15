@@ -2,7 +2,6 @@ package be.ac.umons.meetingmanager.options;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.icu.util.Calendar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -21,10 +20,8 @@ import com.google.gson.GsonBuilder;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.reflect.Array;
-
 import be.ac.umons.meetingmanager.R;
-import be.ac.umons.meetingmanager.connection.UserInfo;
+import be.ac.umons.meetingmanager.meeting.UserInfo;
 import be.ac.umons.meetingmanager.connection.VolleyConnection;
 
 public class OptionActivity extends AppCompatActivity {

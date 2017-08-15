@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Vibrator;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -13,17 +14,8 @@ import android.util.Log;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-
 import be.ac.umons.meetingmanager.MainActivity;
 import be.ac.umons.meetingmanager.R;
-import be.ac.umons.meetingmanager.meeting.ActivityReceiver;
-import be.ac.umons.meetingmanager.meeting.AlarmBroadcastReceive;
-import be.ac.umons.meetingmanager.meeting.AlarmNotification;
-import be.ac.umons.meetingmanager.meeting.Meeting;
-import be.ac.umons.meetingmanager.meeting.activities.MeetingActivity;
 
 public class MeetingFirebaseMessagingService extends FirebaseMessagingService {
 
@@ -60,6 +52,8 @@ public class MeetingFirebaseMessagingService extends FirebaseMessagingService {
     }
 
     private void sendNotification(String messageBody) {
+        Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        v.vibrate(500);
         Intent intent = new Intent(this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,

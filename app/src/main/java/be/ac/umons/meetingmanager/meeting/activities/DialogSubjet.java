@@ -1,27 +1,23 @@
 package be.ac.umons.meetingmanager.meeting.activities;
 
 import android.app.Dialog;
-import android.app.admin.SystemUpdatePolicy;
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 import be.ac.umons.meetingmanager.R;
-import be.ac.umons.meetingmanager.connection.UserInfo;
+import be.ac.umons.meetingmanager.meeting.UserInfo;
 import be.ac.umons.meetingmanager.meeting.Meeting;
 import be.ac.umons.meetingmanager.meeting.Subject;
-import be.ac.umons.meetingmanager.meeting.UserAdapter;
+import be.ac.umons.meetingmanager.meeting.adapters.UserAdapter;
 
 /**
  * Created by SogeP on 06-08-17.
@@ -41,6 +37,7 @@ public class DialogSubjet extends Dialog {
     private Meeting meeting;
     private Context context;
     private TextView noFriendsOption;
+    private boolean isMaster;
 
     public DialogSubjet(@NonNull Context context, final ArrayList<UserInfo> friends, final Meeting meeting) {
         super(context);
@@ -50,6 +47,8 @@ public class DialogSubjet extends Dialog {
         this.meeting = meeting;
         this.context = context;
 
+        UserInfo user = UserInfo.getUserInfoFromCache(context);
+        isMaster = meeting.getMasterID() != null ? meeting.getMasterID().equals(user.getId()) : true;
         adapter = new UserAdapter(context, friends, R.layout.layout_see_friends);
         listView = (ListView) findViewById(R.id.listviewFriends);
         listView.setAdapter(adapter);
@@ -90,6 +89,19 @@ public class DialogSubjet extends Dialog {
         if(!friends.isEmpty())
             noFriendsOption.setVisibility(View.INVISIBLE);
 
+        if(!isMaster)
+        {
+            TextView t = (TextView) findViewById(R.id.textViewDuration);
+            TextView friendsText = (TextView) findViewById(R.id.textViewFriend);
+            friendsText.setText(R.string.participants);
+            t.setVisibility(View.GONE);
+            nameSubjet.setVisibility(View.GONE);
+            info.setVisibility(View.GONE);
+            durationText.setVisibility(View.GONE);
+            seekBar.setVisibility(View.GONE);
+            saveButton.setVisibility(View.GONE);
+        }
+
     }
 
     public void saveAction() {
@@ -117,6 +129,7 @@ public class DialogSubjet extends Dialog {
             meeting.getSubjects().get(positionLoaded).setDuration((seekBar.getProgress()+1)*5);
             meeting.getSubjects().get(positionLoaded).setParticipants(participants);
             load = false;
+
         }else
         {
             meeting.getSubjects().add(new Subject(nameSubjet.getText().toString(), info.getText().toString(),(seekBar.getProgress()+1)*5,participants));
@@ -130,10 +143,18 @@ public class DialogSubjet extends Dialog {
         nameSubjet.setText(subject.getName());
         info.setText(subject.getInfo());
         seekBar.setProgress((subject.getDuration() / 5)-1);
-        for(UserInfo itr : friends)
-            for(UserInfo itr2 : subject.getParticipants())
-                if(itr2.getEmail().equals(itr.getEmail()))
-                    itr.setTaken(true);
+        if(!isMaster)
+        {
+            adapter = new UserAdapter(context, subject.getParticipants(), R.layout.activity_see_add_friends_list);
+            listView.setAdapter(adapter);
+        }else
+        {
+            for(UserInfo itr : friends)
+                for(UserInfo itr2 : subject.getParticipants())
+                    if(itr2.getEmail().equals(itr.getEmail()))
+                        itr.setTaken(true);
+        }
+
         adapter.notifyDataSetChanged();
 
         if(!friends.isEmpty())

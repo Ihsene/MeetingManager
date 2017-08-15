@@ -39,15 +39,15 @@ import java.util.Collections;
 import java.util.Date;
 
 import be.ac.umons.meetingmanager.R;
-import be.ac.umons.meetingmanager.connection.UserInfo;
+import be.ac.umons.meetingmanager.meeting.UserInfo;
 import be.ac.umons.meetingmanager.connection.VolleyConnection;
-import be.ac.umons.meetingmanager.meeting.AlarmBroadcastReceive;
-import be.ac.umons.meetingmanager.meeting.AlarmNotification;
+import be.ac.umons.meetingmanager.meeting.alarm.AlarmBroadcastReceive;
+import be.ac.umons.meetingmanager.meeting.alarm.AlarmNotification;
 import be.ac.umons.meetingmanager.meeting.Meeting;
-import be.ac.umons.meetingmanager.meeting.MeetingAdapter;
+import be.ac.umons.meetingmanager.meeting.adapters.MeetingAdapter;
 import be.ac.umons.meetingmanager.meeting.Subject;
 
-import static be.ac.umons.meetingmanager.meeting.AlarmNotification.cancelAllAlarms;
+import static be.ac.umons.meetingmanager.meeting.alarm.AlarmNotification.cancelAllAlarms;
 import static be.ac.umons.meetingmanager.meeting.activities.CreateMeetingActivity.setAlarm;
 
 public class MeetingManagerActivity extends AppCompatActivity {
@@ -128,8 +128,7 @@ public class MeetingManagerActivity extends AppCompatActivity {
                     showComfirmation(meeting);
                 else {
                     try {
-                        if(meeting.getMasterID().equals(user.getId()))
-                            loadMeeting(meeting);
+                        loadMeeting(meeting);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }

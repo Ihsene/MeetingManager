@@ -34,9 +34,9 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import be.ac.umons.meetingmanager.R;
-import be.ac.umons.meetingmanager.connection.UserInfo;
+import be.ac.umons.meetingmanager.meeting.UserInfo;
 import be.ac.umons.meetingmanager.connection.VolleyConnection;
-import be.ac.umons.meetingmanager.meeting.UserAdapter;
+import be.ac.umons.meetingmanager.meeting.adapters.UserAdapter;
 
 public class SeeAddFriendsActivity extends AppCompatActivity {
 

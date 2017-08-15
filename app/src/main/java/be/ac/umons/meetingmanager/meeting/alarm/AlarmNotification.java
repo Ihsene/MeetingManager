@@ -1,4 +1,4 @@
-package be.ac.umons.meetingmanager.meeting;
+package be.ac.umons.meetingmanager.meeting.alarm;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
