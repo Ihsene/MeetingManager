@@ -64,7 +64,7 @@ public class VolleyConnection {
     public <T> void addToRequestQueue(Request<T> req) {
         if(checkVPN())
             getRequestQueue().add(req);
-        else
+       else
             Toast.makeText(context, R.string.vpn, Toast.LENGTH_LONG).show();
     }
 }

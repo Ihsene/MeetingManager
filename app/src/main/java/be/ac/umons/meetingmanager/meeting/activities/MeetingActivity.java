@@ -8,6 +8,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
@@ -49,7 +50,8 @@ public class MeetingActivity extends AppCompatActivity {
     private boolean isMaster = false;
     private ActivityReceiver activityReceiver;
     private ArrayList<String> presences;
-    UserInfo user;
+    private UserInfo user;
+    private boolean end;
 
     @Override
     public void onBackPressed() {
@@ -100,6 +102,7 @@ public class MeetingActivity extends AppCompatActivity {
         buttonSummon.setVisibility(!isMaster ? View.INVISIBLE:View.VISIBLE);
         listView = (ListView) findViewById(R.id.listPresence);
         setDateFromSubject(false, false);
+        end = false;
 
         if(isMaster)
         {
@@ -120,11 +123,11 @@ public class MeetingActivity extends AppCompatActivity {
     }
 
     public void loadDate(long timeLeft, int index, ArrayList<String> presences, boolean meetingStarted) {
-        for(String itr : presences)
-            registerInAndOutUser(itr,"", true, false);
         currentSujectIndex = index;
         reamingTime = timeLeft;
         setDateFromSubject(true, meetingStarted);
+        for(String itr : presences)
+            registerInAndOutUser(itr,"", true, false);
         if(!meetingStarted && countDownTimer != null)
             countDownTimer.cancel();
 
@@ -164,10 +167,12 @@ public class MeetingActivity extends AppCompatActivity {
                 presences.remove(email);
         }
 
-        if(fromNetwork && userId.equals(meeting.getMasterID()) && !isMaster)
+        if(fromNetwork && userId.equals(meeting.getMasterID()) && !isMaster && end == false)
         {
             Toast.makeText(MeetingActivity.this, R.string.masterLeave, Toast.LENGTH_LONG).show();
+            end = true;
             finish();
+            return;
         }
         for(UserInfo itr : meeting.getSubjects().get(currentSujectIndex).getParticipants())
             if(itr.getEmail().equals(email))
