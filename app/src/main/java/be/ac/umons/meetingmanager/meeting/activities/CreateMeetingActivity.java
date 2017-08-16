@@ -1,6 +1,7 @@
 package be.ac.umons.meetingmanager.meeting.activities;
 
 import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -20,6 +21,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -44,6 +46,7 @@ import java.util.Date;
 import be.ac.umons.meetingmanager.R;
 import be.ac.umons.meetingmanager.meeting.UserInfo;
 import be.ac.umons.meetingmanager.connection.VolleyConnection;
+import be.ac.umons.meetingmanager.meeting.adapters.UserAdapter;
 import be.ac.umons.meetingmanager.meeting.alarm.AlarmBroadcastReceive;
 import be.ac.umons.meetingmanager.meeting.alarm.AlarmNotification;
 import be.ac.umons.meetingmanager.meeting.Meeting;
@@ -67,9 +70,12 @@ public class CreateMeetingActivity extends AppCompatActivity implements DatePick
     private Gson gson;
     private UserInfo user;
     private DialogSubjet dialog;
+    private Dialog dialogP;
     private boolean editWhileMeeting = false;
     private boolean isMaster;
     private ExpandableListView expandableListView;
+    private Button fullpresenceButton;
+    private ArrayList<UserInfo> partiticipantAllMeeting;
 
 
 
@@ -89,8 +95,9 @@ public class CreateMeetingActivity extends AppCompatActivity implements DatePick
         int year = calendar.get(Calendar.YEAR), month = calendar.get(Calendar.MONTH),day = calendar.get(Calendar.DAY_OF_MONTH);
         datePickerDialog = new DatePickerDialog(this, CreateMeetingActivity.this, year, month, day);
         user = UserInfo.getUserInfoFromCache(this);
-
+        fullpresenceButton = (Button) findViewById(R.id.buttonPresenceC);
         handleEditMeeting();
+        partiticipantAllMeeting = new ArrayList<UserInfo>();
         isMaster = meeting.getMasterID() != null ? user.getId().equals(meeting.getMasterID()) : true;
         gson = new GsonBuilder().excludeFieldsWithModifiers(java.lang.reflect.Modifier.TRANSIENT).create();
         try {
@@ -112,6 +119,7 @@ public class CreateMeetingActivity extends AppCompatActivity implements DatePick
         }
         handleAddSubjectList();
         createDialog();
+        createDialogPresence();
         if(!isMaster)
         {
             setTitle("Réunion");
@@ -120,7 +128,10 @@ public class CreateMeetingActivity extends AppCompatActivity implements DatePick
             setDate.setVisibility(View.GONE);
             save.setVisibility(View.GONE);
             Button b = (Button) findViewById(R.id.buttonAddSubjets);
+            Button b2 = (Button) findViewById(R.id.buttonPresenceC);
             b.setVisibility(View.GONE);
+            b2.setVisibility(View.GONE);
+
 
         }
 
@@ -266,6 +277,7 @@ public class CreateMeetingActivity extends AppCompatActivity implements DatePick
     public void handleSaveMeeting() throws JSONException {
 
         UserInfo user = UserInfo.getUserInfoFromCache(this);
+
         user.setMeeting(meeting);
         Gson gson  = new GsonBuilder().excludeFieldsWithModifiers(java.lang.reflect.Modifier.TRANSIENT).create();
 
@@ -363,6 +375,32 @@ public class CreateMeetingActivity extends AppCompatActivity implements DatePick
             AlarmNotification.cancelAlarm(c,intent, id);
     }
 
+    public void createDialogPresence() {
+        /*dialogP = new Dialog(this);
+        dialogP.setContentView(R.layout.content_see_add_friends);
+        dialogP.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialogInterface) {
+                partiticipantAllMeeting.clear();
+                for(UserInfo itr : friends)
+                    if(itr.isTaken())
+                        partiticipantAllMeeting.add(itr);
+            }
+        });
+
+        for(UserInfo itr : partiticipantAllMeeting)
+            for(UserInfo itr2 : friends)
+                if(itr.getEmail().equals(itr2.getEmail()))
+                    itr2.setTaken(true);
+        UserAdapter adapter = new UserAdapter(this, friends, R.layout.layout_see_friends);
+        ListView listView = (ListView) dialogP.findViewById(R.id.listViewFriends);
+        listView.setAdapter(adapter);
+        ProgressBar p = (ProgressBar) dialogP.findViewById(R.id.progressBar2);
+        TextView t = (TextView) dialogP.findViewById(R.id.noFriendsTextView);
+        t.setVisibility(View.GONE);
+        p.setVisibility(View.GONE);*/
+    }
+
     public void actionButton(View view) {
         Intent intent = null;
         switch (view.getId()) {
@@ -375,6 +413,7 @@ public class CreateMeetingActivity extends AppCompatActivity implements DatePick
                 }
                 break;
             case R.id.buttonAddSubjets: createDialog(); dialog.show(); break;
+            //case R.id.buttonPresenceC: createDialogPresence(); dialogP.show(); break;
         }
     }
 }

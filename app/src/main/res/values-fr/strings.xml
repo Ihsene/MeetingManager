@@ -85,4 +85,7 @@
     <string name="days">Jours</string>
     <string name="participants">Les participants</string>
     <string name="vpn">Vous devez vous connecter sur le VPN de l\'UMONS</string>
+    <string name="presenceButton">Présence complète</string>
+    <string name="sendAlert">Envoyer une notification</string>
+    <string name="commme">Un notification demandant la présence des participants a été envoyée</string>
 </resources>

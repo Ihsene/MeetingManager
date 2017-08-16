@@ -102,6 +102,7 @@
     <string name="noFriendsOption">You have no friends ! Go to option to add yours friends !</string>
     <string name="meetingEdited">Meeting edited!</string>
     <string name="send_noti_url">http://sith-meetings.umons.ac.be:8080/sendNotification</string>
+    <string name="send_noti_alert_url">http://sith-meetings.umons.ac.be:8080/sendNotificationToCome</string>
     <string name="send_noti_sub_url">http://sith-meetings.umons.ac.be:8080/sendNotificationSuject</string>
     <string name="joinMeet">Join the meeting</string>
     <string name="joinMeetingCom">Do you want to join the meeting ?</string>
@@ -116,4 +117,7 @@
     <string name="days">Days</string>
     <string name="participants">Participants</string>
     <string name="vpn">You must connect to the UMONS VPN</string>
+    <string name="presenceButton">Full presence</string>
+    <string name="sendAlert">Send a notification to Everyone</string>
+    <string name="commme">All the participant have receive a notification to come</string>
 </resources>

@@ -39,7 +39,7 @@ public class MeetingActivity extends AppCompatActivity {
     private Meeting meeting;
     private TextView subjectName,subjectDescription,timerTextView;
     private ListView listView;
-    private Button editButton,nextButton;
+    private Button editButton,nextButton, buttonSummon;
     private int currentSujectIndex;
     private UserAdapter adapter;
     private CountDownTimer countDownTimer;
@@ -92,11 +92,12 @@ public class MeetingActivity extends AppCompatActivity {
         subjectDescription = (TextView) findViewById(R.id.textViewDescription);
         timerTextView = (TextView) findViewById(R.id.textViewTimer);
         editButton = (Button) findViewById(R.id.buttonEdit);
-
-        editButton.setVisibility(View.INVISIBLE);
+        editButton.setVisibility(!isMaster ? View.INVISIBLE:View.VISIBLE);
         nextButton = (Button) findViewById(R.id.buttonNext);
         nextButton.setText(R.string.startM);
         nextButton.setVisibility(!isMaster ? View.INVISIBLE:View.VISIBLE);
+        buttonSummon = (Button) findViewById(R.id.buttonSummon);
+        buttonSummon.setVisibility(!isMaster ? View.INVISIBLE:View.VISIBLE);
         listView = (ListView) findViewById(R.id.listPresence);
         setDateFromSubject(false, false);
 
@@ -350,15 +351,28 @@ public class MeetingActivity extends AppCompatActivity {
                 }).setIcon(android.R.drawable.ic_dialog_alert).show();
     }
 
+    public void alertEveryone() {
+
+    }
+
     public void actionOfButton(View view) {
         Intent intent = null;
         switch (view.getId()) {
             case R.id.buttonNext: handleNextButton(); break;
             case R.id.buttonEdit:
-                intent = new Intent(this, CreateMeetingActivity.class);
+                /*intent = new Intent(this, CreateMeetingActivity.class);
                 intent.putExtra("meeting", meeting);
                 intent.putExtra("index", currentSujectIndex);
-                startActivityForResult(intent, 1); break;
+                startActivityForResult(intent, 1);*/ break;
+            case R.id.buttonSummon:
+                try {
+                    sendMessageToAllParticipant(getString(R.string.send_noti_alert_url), false);
+                    Toast.makeText(MeetingActivity.this, R.string.commme, Toast.LENGTH_LONG).show();
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                break;
         }
     }
 

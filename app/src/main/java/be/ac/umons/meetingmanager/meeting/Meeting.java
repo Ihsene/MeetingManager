@@ -11,22 +11,6 @@ import java.util.Date;
  * Created by SogeP on 02-08-17.
  */
 
-/*
-
-TODO
-empecher de se connecter a la réunion avant le maitre : Verifier en db quand la réunion a demarré et check
-
-
-duplication refactoring
-verifier attaque serveur
-ajouter l'envoi de token au refresh dans la classe FirebaseInstanceIDService
-faire des notifcations plus detailler, notification qui envoi au bon endroit
-mettre des check sur le demarrage réunions
-regarder pour ajouter des options
-ne pas send des notif a un mec qui n'a pas en ami, amélioré le systeme d'ami
-quand on change l'option pour prevenir avant une réunion, c'est juste pour les nouvelles réunions que c'est mise a jour
- */
-
 public class Meeting implements Comparable<Meeting>,Parcelable {
     private String id;
     private String masterID;
