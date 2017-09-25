@@ -8,6 +8,8 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -48,11 +50,13 @@ public class SeeAddFriendsActivity extends AppCompatActivity {
     private ArrayList<UserInfo> friends;
     private ProgressBar progressBar;
     private Gson gson;
+    private EditText searchEdit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_see_add_friends);
+        searchEdit = (EditText) findViewById(R.id.search_bar_edit);
         setTitle(R.string.friendListTitle);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -114,6 +118,22 @@ public class SeeAddFriendsActivity extends AppCompatActivity {
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
                 handleActionDelete((UserInfo) adapterView.getItemAtPosition(i),i);
                 return true;
+            }
+        });
+
+        searchEdit.addTextChangedListener(new TextWatcher() {
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                adapter.filter(s.toString());
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count,int after) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
             }
         });
     }

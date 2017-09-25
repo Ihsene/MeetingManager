@@ -3,6 +3,8 @@ package be.ac.umons.meetingmanager.meeting.activities;
 import android.app.Dialog;
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -27,6 +29,7 @@ public class DialogSubjet extends Dialog {
     private ListView listView;
     private EditText nameSubjet;
     private EditText info;
+    private EditText searchEdit;
     private TextView durationText;
     private SeekBar seekBar;
     private Button saveButton;
@@ -52,6 +55,7 @@ public class DialogSubjet extends Dialog {
         adapter = new UserAdapter(context, friends, R.layout.layout_see_friends);
         listView = (ListView) findViewById(R.id.listviewFriends);
         listView.setAdapter(adapter);
+        listView.setTextFilterEnabled(true);
         nameSubjet = (EditText) findViewById(R.id.nameSubjet);
         info = (EditText) findViewById(R.id.infoSubjet);
         durationText = (TextView) findViewById(R.id.textViewDur);
@@ -101,6 +105,23 @@ public class DialogSubjet extends Dialog {
             seekBar.setVisibility(View.GONE);
             saveButton.setVisibility(View.GONE);
         }
+
+        searchEdit = (EditText) findViewById(R.id.search_bar_edit);
+        searchEdit.addTextChangedListener(new TextWatcher() {
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                adapter.filter(s.toString());
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count,int after) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
 
     }
 

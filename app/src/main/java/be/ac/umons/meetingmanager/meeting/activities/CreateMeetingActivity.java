@@ -12,6 +12,8 @@ import android.os.Build;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -76,6 +78,7 @@ public class CreateMeetingActivity extends AppCompatActivity implements DatePick
     private ExpandableListView expandableListView;
     private Button fullpresenceButton;
     private ArrayList<UserInfo> partiticipantAllMeeting;
+    private UserAdapter adapterPresence;
 
 
 
@@ -84,7 +87,6 @@ public class CreateMeetingActivity extends AppCompatActivity implements DatePick
         super.onCreate(savedInstanceState);
         editWhileMeeting = getIntent().hasExtra("index");
         setContentView(editWhileMeeting ? R.layout.layout_edit_meeting : R.layout.activity_create_meeting);
-
         calendar = Calendar.getInstance();
         name = (EditText) findViewById(R.id.nameEditText);
         location = (EditText) findViewById(R.id.locationEditText);
@@ -394,9 +396,25 @@ public class CreateMeetingActivity extends AppCompatActivity implements DatePick
             for(UserInfo itr2 : friends)
                 if(itr.getEmail().equals(itr2.getEmail()))
                     itr2.setTaken(true);
-        UserAdapter adapter = new UserAdapter(this, friends, R.layout.layout_see_friends);
+        EditText searchEdit = (EditText) dialogP.findViewById(R.id.search_bar_edit);
+        adapterPresence = new UserAdapter(this, friends, R.layout.layout_see_friends);
+        searchEdit.addTextChangedListener(new TextWatcher() {
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                adapterPresence.filter(s.toString());
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count,int after) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
         ListView listView = (ListView) dialogP.findViewById(R.id.listViewFriends);
-        listView.setAdapter(adapter);
+        listView.setAdapter(adapterPresence);
         ProgressBar p = (ProgressBar) dialogP.findViewById(R.id.progressBar2);
         TextView t = (TextView) dialogP.findViewById(R.id.noFriendsTextView);
         t.setVisibility(View.GONE);
