@@ -62,9 +62,9 @@ public class VolleyConnection {
     }
 
     public <T> void addToRequestQueue(Request<T> req) {
-        if(checkVPN())
+        //if(checkVPN())
             getRequestQueue().add(req);
-       else
-            Toast.makeText(context, R.string.vpn, Toast.LENGTH_LONG).show();
+       /*else
+            Toast.makeText(context, R.string.vpn, Toast.LENGTH_LONG).show();*/
     }
 }

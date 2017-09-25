@@ -179,7 +179,7 @@ public class CreateMeetingActivity extends AppCompatActivity implements DatePick
             {
                 name.setText(m.getTitle());
                 location.setText(m.getPlace());
-                date.setText(m.getDate().toString());
+                date.setText(new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(m.getDate()));
             }else
             {
                 int index = getIntent().getExtras().getInt("index");
@@ -266,7 +266,7 @@ public class CreateMeetingActivity extends AppCompatActivity implements DatePick
                 calendar.set(Calendar.DAY_OF_MONTH, daySet); calendar.set(Calendar.HOUR_OF_DAY, hourSet);
                 calendar.set(Calendar.MINUTE, minuteSet);
                 meeting.setDate(calendar.getTime());
-                date.setText(meeting.getDate().toString());
+                date.setText(new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(calendar.getTime()));
             }
         }, hour, minute, true);
         timePickerDialog.show();
@@ -376,7 +376,7 @@ public class CreateMeetingActivity extends AppCompatActivity implements DatePick
     }
 
     public void createDialogPresence() {
-        /*dialogP = new Dialog(this);
+        dialogP = new Dialog(this);
         dialogP.setContentView(R.layout.content_see_add_friends);
         dialogP.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
@@ -398,7 +398,7 @@ public class CreateMeetingActivity extends AppCompatActivity implements DatePick
         ProgressBar p = (ProgressBar) dialogP.findViewById(R.id.progressBar2);
         TextView t = (TextView) dialogP.findViewById(R.id.noFriendsTextView);
         t.setVisibility(View.GONE);
-        p.setVisibility(View.GONE);*/
+        p.setVisibility(View.GONE);
     }
 
     public void actionButton(View view) {
@@ -413,7 +413,7 @@ public class CreateMeetingActivity extends AppCompatActivity implements DatePick
                 }
                 break;
             case R.id.buttonAddSubjets: createDialog(); dialog.show(); break;
-            //case R.id.buttonPresenceC: createDialogPresence(); dialogP.show(); break;
+            case R.id.buttonPresenceC: createDialogPresence(); dialogP.show(); break;
         }
     }
 }
