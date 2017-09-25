@@ -18,10 +18,12 @@ import android.widget.Toast;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -34,6 +36,8 @@ import be.ac.umons.meetingmanager.connection.VolleyConnection;
 import be.ac.umons.meetingmanager.meeting.Meeting;
 import be.ac.umons.meetingmanager.meeting.UserInfo;
 import be.ac.umons.meetingmanager.meeting.adapters.UserAdapter;
+
+import static be.ac.umons.meetingmanager.meeting.activities.MeetingManagerActivity.getMeetingFromServeur;
 
 public class MeetingActivity extends AppCompatActivity {
 
@@ -356,19 +360,15 @@ public class MeetingActivity extends AppCompatActivity {
                 }).setIcon(android.R.drawable.ic_dialog_alert).show();
     }
 
-    public void alertEveryone() {
-
-    }
-
     public void actionOfButton(View view) {
         Intent intent = null;
         switch (view.getId()) {
             case R.id.buttonNext: handleNextButton(); break;
             case R.id.buttonEdit:
-                /*intent = new Intent(this, CreateMeetingActivity.class);
+                intent = new Intent(this, CreateMeetingActivity.class);
                 intent.putExtra("meeting", meeting);
                 intent.putExtra("index", currentSujectIndex);
-                startActivityForResult(intent, 1);*/ break;
+                startActivityForResult(intent, 1); break;
             case R.id.buttonSummon:
                 try {
                     sendMessageToAllParticipant(getString(R.string.send_noti_alert_url), false);
@@ -390,5 +390,26 @@ public class MeetingActivity extends AppCompatActivity {
             adapter = new UserAdapter(this, meeting.getSubjects().get(currentSujectIndex).getParticipants(), R.layout.layout_presence_member);
             listView.setAdapter(adapter);
         }
+    }
+
+    public void updateMeeting() throws JSONException {
+        UserInfo user = UserInfo.getUserInfoFromCache(this);
+        user.setMeeting(meeting);
+        ArrayList<JSONObject> jsonObjects = new ArrayList<JSONObject>();
+        Gson gson = new GsonBuilder().excludeFieldsWithModifiers(java.lang.reflect.Modifier.TRANSIENT).create();
+        jsonObjects.add(new JSONObject(gson.toJson(user)));
+        JsonArrayRequest req = new JsonArrayRequest(Request.Method.POST,(String) getText(R.string.get_meeting_url), new JSONArray(jsonObjects),
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        meeting = getMeetingFromServeur(response);
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(MeetingActivity.this, error.toString(), Toast.LENGTH_LONG).show();
+            }
+        });
+        VolleyConnection.getInstance(getApplicationContext()).addToRequestQueue(req);
     }
 }

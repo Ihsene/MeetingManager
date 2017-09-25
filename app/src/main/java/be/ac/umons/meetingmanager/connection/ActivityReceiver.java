@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.util.Log;
 
+import org.json.JSONException;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -40,7 +42,12 @@ public class ActivityReceiver extends BroadcastReceiver {
                     Integer.parseInt(intent.getStringExtra("currentIndex")),
                     new ArrayList<>(Arrays.asList(intent.getStringExtra("presence").split(" "))),
                     intent.getStringExtra("started").equals("true"));
-        }
+        } else if(intent.getStringExtra("modif").equals("newMeeting"))
+            try {
+                ((MeetingActivity) activity).updateMeeting();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
 
     }
 }

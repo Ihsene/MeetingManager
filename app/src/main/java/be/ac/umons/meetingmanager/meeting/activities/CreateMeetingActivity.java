@@ -283,7 +283,9 @@ public class CreateMeetingActivity extends AppCompatActivity implements DatePick
 
         if(editWhileMeeting)
         {
-            meeting.setUpdate(true);
+            user.getMeeting().setUpdate(true);
+            final Date date = user.getMeeting().getDate();
+            user.getMeeting().setDateToSend(new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date));
             JsonObjectRequest req = new JsonObjectRequest(Request.Method.POST,getString(R.string.update_meeting_url), new JSONObject(gson.toJson(user)),
                     new Response.Listener<JSONObject>() {
                         @Override

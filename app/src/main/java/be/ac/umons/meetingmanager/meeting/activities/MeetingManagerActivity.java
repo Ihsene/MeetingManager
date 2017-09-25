@@ -173,42 +173,11 @@ public class MeetingManagerActivity extends AppCompatActivity {
                     Meeting meeting;
                     @Override
                     public void onResponse(JSONArray response) {
-                        Meeting meeting;
-
-                        try {
-                            meeting = new Meeting(
-                                    response.getJSONObject(0).getJSONObject("meeting").getString("TITLE"),
-                                    response.getJSONObject(0).getJSONObject("meeting").getString("PLACE"),
-                                    new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(response.getJSONObject(0).getJSONObject("meeting").getString("MDATE"))
-                                    , new ArrayList<Subject>());
-                            meeting.setId(response.getJSONObject(0).getJSONObject("meeting").getString("ID"));
-                            meeting.setMasterID(response.getJSONObject(0).getJSONObject("meeting").getString("MASTER_ID"));
-                            Subject subject;
-                            for(int i = 0; i < response.getJSONObject(1).getJSONArray("subjects").length(); i++)
-                            {
-                                subject = new Subject(response.getJSONObject(1).getJSONArray("subjects").getJSONObject(i).getString("NAME"),
-                                        response.getJSONObject(1).getJSONArray("subjects").getJSONObject(i).getString("INFO"),
-                                        Integer.parseInt(response.getJSONObject(1).getJSONArray("subjects").getJSONObject(i).getString("DURATION")),
-                                        new ArrayList<UserInfo>());
-                                subject.setId(Integer.parseInt(response.getJSONObject(1).getJSONArray("subjects").getJSONObject(i).getString("ID")));
-
-                                for(int j = 0; j < +response.getJSONObject(2).getJSONArray("participants").length(); j++)
-                                    if(Integer.parseInt(response.getJSONObject(2).getJSONArray("participants").getJSONObject(j).getString("SUBJET_ID")) == subject.getId())
-                                        subject.getParticipants().add(new UserInfo(response.getJSONObject(2).getJSONArray("participants").getJSONObject(j).getString("FIRST_NAME"),
-                                                response.getJSONObject(2).getJSONArray("participants").getJSONObject(j).getString("LAST_NAME"),
-                                                response.getJSONObject(2).getJSONArray("participants").getJSONObject(j).getString("EMAIL"),
-                                                "","",""));
-                                meeting.getSubjects().add(subject);
-                            }
-
-                            Intent i = new Intent(MeetingManagerActivity.this, !(getIntent().getExtras() != null && getIntent().getExtras().getBoolean("join")) ? CreateMeetingActivity.class : MeetingActivity.class);
-                            i.putExtra("meeting", meeting);
-                            startActivity(i);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        }
+                        meeting = getMeetingFromServeur(response);
+                        Intent i = new Intent(MeetingManagerActivity.this, !(getIntent().getExtras() != null && getIntent().getExtras().getBoolean("join")) ? CreateMeetingActivity.class : MeetingActivity.class);
+                        i.putExtra("meeting", meeting);
+                        startActivity(i);
+                        
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -217,6 +186,41 @@ public class MeetingManagerActivity extends AppCompatActivity {
             }
         });
         VolleyConnection.getInstance(getApplicationContext()).addToRequestQueue(req);
+    }
+    
+    public static Meeting getMeetingFromServeur(JSONArray response) {
+        Meeting meeting = null;
+
+        try {
+            meeting = new Meeting(
+                    response.getJSONObject(0).getJSONObject("meeting").getString("TITLE"),
+                    response.getJSONObject(0).getJSONObject("meeting").getString("PLACE"),
+                    new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(response.getJSONObject(0).getJSONObject("meeting").getString("MDATE"))
+                    , new ArrayList<Subject>());
+            meeting.setId(response.getJSONObject(0).getJSONObject("meeting").getString("ID"));
+            meeting.setMasterID(response.getJSONObject(0).getJSONObject("meeting").getString("MASTER_ID"));
+            Subject subject;
+            for (int i = 0; i < response.getJSONObject(1).getJSONArray("subjects").length(); i++) {
+                subject = new Subject(response.getJSONObject(1).getJSONArray("subjects").getJSONObject(i).getString("NAME"),
+                        response.getJSONObject(1).getJSONArray("subjects").getJSONObject(i).getString("INFO"),
+                        Integer.parseInt(response.getJSONObject(1).getJSONArray("subjects").getJSONObject(i).getString("DURATION")),
+                        new ArrayList<UserInfo>());
+                subject.setId(Integer.parseInt(response.getJSONObject(1).getJSONArray("subjects").getJSONObject(i).getString("ID")));
+
+                for (int j = 0; j < +response.getJSONObject(2).getJSONArray("participants").length(); j++)
+                    if (Integer.parseInt(response.getJSONObject(2).getJSONArray("participants").getJSONObject(j).getString("SUBJET_ID")) == subject.getId())
+                        subject.getParticipants().add(new UserInfo(response.getJSONObject(2).getJSONArray("participants").getJSONObject(j).getString("FIRST_NAME"),
+                                response.getJSONObject(2).getJSONArray("participants").getJSONObject(j).getString("LAST_NAME"),
+                                response.getJSONObject(2).getJSONArray("participants").getJSONObject(j).getString("EMAIL"),
+                                "", "", ""));
+                meeting.getSubjects().add(subject);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return meeting;
     }
 
     public void handleActionDelete(final Meeting meeting, final int i) {
