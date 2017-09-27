@@ -2,6 +2,7 @@ package be.ac.umons.meetingmanager.meeting.activities;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.CountDownTimer;
 import android.support.v4.content.LocalBroadcastManager;
@@ -56,6 +57,7 @@ public class MeetingActivity extends AppCompatActivity {
     private ArrayList<String> presences;
     private UserInfo user;
     private boolean end;
+    private SharedPreferences sharedPreferences;
 
     @Override
     public void onBackPressed() {
@@ -72,6 +74,13 @@ public class MeetingActivity extends AppCompatActivity {
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
+                        if(isMaster)
+                        {
+                            SharedPreferences.Editor editor = sharedPreferences.edit();
+                            editor.putInt("index", currentSujectIndex);
+                            editor.putLong("duration", reamingTime);
+                            editor.commit();
+                        }
                         finish();
                     }
                 })
@@ -83,9 +92,28 @@ public class MeetingActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d("mmm","test on destroy");
+        if(isMaster && meeting != null && currentSujectIndex == meeting.getSubjects().size() - 1 && reamingTime == 0)
+        {
+            Log.d("mmm","test saveeeeeeee");
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putInt("index", 0);
+            editor.putLong("duration", meeting.getSubjects().get(0).getDuration() * 60000);
+            editor.commit();
+        }
+
+        if(countDownTimer != null)
+            countDownTimer.cancel();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(activityReceiver);
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_meeting);
+        sharedPreferences = getSharedPreferences(getString(R.string.setting), MeetingActivity.MODE_PRIVATE);
         currentSujectIndex = 0;
         activityReceiver = new ActivityReceiver(this);
         LocalBroadcastManager.getInstance(this).registerReceiver(activityReceiver, ActivityReceiver.CURRENT_ACTIVITY_RECEIVER_FILTER);
@@ -105,7 +133,11 @@ public class MeetingActivity extends AppCompatActivity {
         buttonSummon = (Button) findViewById(R.id.buttonSummon);
         buttonSummon.setVisibility(!isMaster ? View.INVISIBLE:View.VISIBLE);
         listView = (ListView) findViewById(R.id.listPresence);
-        setDateFromSubject(false, false);
+
+        if(isMaster)
+            currentSujectIndex = sharedPreferences.getInt("index", 0);
+
+        setDataFromSubject(false, false);
         end = false;
 
         if(isMaster)
@@ -129,7 +161,7 @@ public class MeetingActivity extends AppCompatActivity {
     public void loadDate(long timeLeft, int index, ArrayList<String> presences, boolean meetingStarted) {
         currentSujectIndex = index;
         reamingTime = timeLeft;
-        setDateFromSubject(true, meetingStarted);
+        setDataFromSubject(true, meetingStarted);
         for(String itr : presences)
             registerInAndOutUser(itr,"", true, false);
         if(!meetingStarted && countDownTimer != null)
@@ -174,9 +206,10 @@ public class MeetingActivity extends AppCompatActivity {
         if(fromNetwork && userId.equals(meeting.getMasterID()) && !isMaster && end == false)
         {
             Toast.makeText(MeetingActivity.this, R.string.masterLeave, Toast.LENGTH_LONG).show();
+            if(countDownTimer != null)
+                countDownTimer.cancel();
             end = true;
             finish();
-            return;
         }
         for(UserInfo itr : meeting.getSubjects().get(currentSujectIndex).getParticipants())
             if(itr.getEmail().equals(email))
@@ -230,7 +263,7 @@ public class MeetingActivity extends AppCompatActivity {
         if(nextButton.getText().toString().equals(getString(R.string.startM)))
         {
             nextButton.setText(R.string.next);
-            setCount(meeting.getSubjects().get(currentSujectIndex).getDuration() * 60000);
+            setCount(reamingTime);
             try {
                 sendMessageToAllParticipant(getString(R.string.meeting_info_url),false);
             } catch (JSONException e) {
@@ -274,7 +307,7 @@ public class MeetingActivity extends AppCompatActivity {
                 }
                 if (currentSujectIndex == meeting.getSubjects().size() - 1)
                     nextButton.setText(R.string.endMeeting);
-                setDateFromSubject(false, true);
+                setDataFromSubject(false, true);
                 try {
                     sendMessageToAllParticipant(getString(R.string.meeting_info_url),false);
                 } catch (JSONException e) {
@@ -284,13 +317,20 @@ public class MeetingActivity extends AppCompatActivity {
         }
     }
 
-    public void setDateFromSubject(boolean load, boolean meetingStarted)
+    public void setDataFromSubject(boolean load, boolean meetingStarted)
     {
         subjectName.setText(meeting.getSubjects().get(currentSujectIndex).getName());
         subjectDescription.setText(meeting.getSubjects().get(currentSujectIndex).getInfo());
         adapter = new UserAdapter(this, meeting.getSubjects().get(currentSujectIndex).getParticipants(), R.layout.layout_presence_member);
         listView.setAdapter(adapter);
         long duration = load? reamingTime : meeting.getSubjects().get(currentSujectIndex).getDuration() * 60000;
+        if(isMaster && !meetingStarted)
+        {
+            Log.d("mmm","test rem "+ sharedPreferences.getLong("duration", duration));
+            duration = sharedPreferences.getLong("duration", duration);
+        }
+
+
         reamingTime = duration;
         updateTimer(duration);
         if(meetingStarted && (!(nextButton.getText().toString().equals(getString(R.string.startM))) || !isMaster))
@@ -344,6 +384,8 @@ public class MeetingActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         if(isMaster)
                         {
+                            reamingTime = 0;
+                            Log.d("mmmm"," test on reset");
                             try {
                                 sendMessageToAllParticipant(getString(R.string.meeting_info_url), true);
                             } catch (JSONException e) {
@@ -394,6 +436,7 @@ public class MeetingActivity extends AppCompatActivity {
 
     public void updateMeeting() throws JSONException {
         UserInfo user = UserInfo.getUserInfoFromCache(this);
+        sendPresence(true);
         user.setMeeting(meeting);
         ArrayList<JSONObject> jsonObjects = new ArrayList<JSONObject>();
         Gson gson = new GsonBuilder().excludeFieldsWithModifiers(java.lang.reflect.Modifier.TRANSIENT).create();

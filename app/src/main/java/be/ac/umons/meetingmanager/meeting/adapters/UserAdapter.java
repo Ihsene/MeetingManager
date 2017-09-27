@@ -89,7 +89,9 @@ public class UserAdapter extends ArrayAdapter<UserInfo>  {
         if(charText.length() != 0)
         {
             for(int i = 0; i < friends.size(); i++)
-                if (!friends.get(i).getName().toLowerCase(Locale.getDefault()).contains(charText))
+                if (!friends.get(i).getName().toLowerCase(Locale.getDefault()).contains(charText) &&
+                        !friends.get(i).getFamilyName().toLowerCase(Locale.getDefault()).contains(charText) &&
+                        !friends.get(i).getEmail().toLowerCase(Locale.getDefault()).contains(charText))
                     hidden.add(i);
         }
         notifyDataSetChanged();
