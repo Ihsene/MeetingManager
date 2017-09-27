@@ -21,6 +21,7 @@ public class UserInfo implements Parcelable {
     private String friend;
     private Meeting meeting;
     private boolean isHere;
+    private boolean request, asked;
 
     public UserInfo(String name, String familyName, String email, String id, String token, String tokenFire) {
         this.setName(name);
@@ -163,5 +164,21 @@ public class UserInfo implements Parcelable {
 
     public void setHere(boolean here) {
         isHere = here;
+    }
+
+    public boolean isRequest() {
+        return request;
+    }
+
+    public void setRequest(boolean request) {
+        this.request = request;
+    }
+
+    public boolean isAsked() {
+        return asked;
+    }
+
+    public void setAsked(boolean asked) {
+        this.asked = asked;
     }
 }

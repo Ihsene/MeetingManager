@@ -122,4 +122,6 @@
     <string name="search_bar">Search</string>
     <string name="notif_Subject">Envoyer une notification avant le début d\'un sujet de</string>
     <string name="minute">Minutes</string>
+    <string name="accept_friend_url">http://sith-meetings.umons.ac.be:8080/acceptFriend</string>
+    <string name="friendAccepted">Ajouté</string>
 </resources>

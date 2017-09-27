@@ -1,6 +1,7 @@
 package be.ac.umons.meetingmanager.options;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
@@ -138,7 +139,7 @@ public class SeeAddFriendsActivity extends AppCompatActivity {
         });
     }
 
-    public void handleActionDelete(final UserInfo user, final int i) {
+    public void handleActionDelete(final UserInfo friendToDelete, final int i) {
         AlertDialog.Builder builder = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ?
                 new AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert):
                 new AlertDialog.Builder(this);
@@ -146,7 +147,7 @@ public class SeeAddFriendsActivity extends AppCompatActivity {
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         try {
-                            handleRemoveFriendFromDB(user);
+                            handleRemoveOrAcceptFriendFromDB(user, friendToDelete, SeeAddFriendsActivity.this, gson, true);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -163,23 +164,23 @@ public class SeeAddFriendsActivity extends AppCompatActivity {
                 }).setIcon(android.R.drawable.ic_dialog_alert).show();
     }
 
-    public void handleRemoveFriendFromDB(final UserInfo friend) throws JSONException {
+    public static void handleRemoveOrAcceptFriendFromDB(UserInfo user, final UserInfo friend, final Context context, Gson gson, final boolean remove) throws JSONException {
         user.setFriend(friend.getEmail());
-        JsonObjectRequest req = new JsonObjectRequest(Request.Method.POST,(String) getText(R.string.remove_friend_url), new JSONObject(gson.toJson(user)),
+        JsonObjectRequest req = new JsonObjectRequest(Request.Method.POST,(String) context.getText(remove ?R.string.remove_friend_url:R.string.accept_friend_url), new JSONObject(gson.toJson(user)),
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        Toast.makeText(SeeAddFriendsActivity.this, friend.getName()+" "+friend.getFamilyName()+" "+getString(R.string.friendsRemoved), Toast.LENGTH_LONG).show();
+                        Toast.makeText(context, friend.getName()+" "+friend.getFamilyName()+" "+context.getString(remove? R.string.friendsRemoved:R.string.friendAccepted), Toast.LENGTH_LONG).show();
                     }
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(SeeAddFriendsActivity.this, error.toString(), Toast.LENGTH_LONG).show();
+                Toast.makeText(context, error.toString(), Toast.LENGTH_LONG).show();
             }
         });
         req.setRetryPolicy(new DefaultRetryPolicy(0, DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        VolleyConnection.getInstance(getApplicationContext()).addToRequestQueue(req);
+        VolleyConnection.getInstance(context).addToRequestQueue(req);
     }
 
     public void handleSaveFriend () throws JSONException {
@@ -192,6 +193,7 @@ public class SeeAddFriendsActivity extends AppCompatActivity {
                             friend = new UserInfo(response.getString("FIRST_NAME"),response.getString("LAST_NAME"),
                                     response.getString("EMAIL"),"",
                                     "","");
+                            friend.setRequest(true);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -219,18 +221,33 @@ public class SeeAddFriendsActivity extends AppCompatActivity {
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
+
                         UserInfo user = null;
-                        for(int i = 0; i < response.length(); i++)
-                        {
-                            try {
-                                user = new UserInfo(response.getJSONObject(i).getString("FIRST_NAME"),response.getJSONObject(i).getString("LAST_NAME"),
-                                        response.getJSONObject(i).getString("EMAIL"),"",
-                                        "","");
+                        try {
+                            JSONArray itr = response.getJSONObject(0).getJSONArray("request");
+                            for(int j = 0; j < itr.length(); j++)
+                            {
+                                user = null;
+                                user = new UserInfo(itr.getJSONObject(j).getString("FIRST_NAME"),
+                                        itr.getJSONObject(j).getString("LAST_NAME"),
+                                        itr.getJSONObject(j).getString("EMAIL"),"","","");
+                                user.setRequest(Integer.parseInt(itr.getJSONObject(j).getString("ACCEPTED")) == 0);
                                 friends.add(user);
-                            } catch (JSONException e) {
-                                e.printStackTrace();
                             }
+                            JSONArray itr2 = response.getJSONObject(1).getJSONArray("asked");
+                            for(int j = 0; j < itr2.length(); j++)
+                            {
+                                user = null;
+                                user = new UserInfo(itr2.getJSONObject(j).getString("FIRST_NAME"),
+                                        itr2.getJSONObject(j).getString("LAST_NAME"),
+                                        itr2.getJSONObject(j).getString("EMAIL"),"","","");
+                                user.setAsked(Integer.parseInt(itr2.getJSONObject(j).getString("ACCEPTED")) == 0);
+                                friends.add(user);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
+
                         progressBar.setVisibility(View.INVISIBLE);
                         adapter.notifyDataSetChanged();
                         noFriends.setVisibility(friends.size() == 0 ? View.VISIBLE: View.INVISIBLE);
