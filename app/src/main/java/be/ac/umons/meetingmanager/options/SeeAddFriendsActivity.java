@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -222,32 +223,7 @@ public class SeeAddFriendsActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(JSONArray response) {
 
-                        UserInfo user = null;
-                        try {
-                            JSONArray itr = response.getJSONObject(0).getJSONArray("request");
-                            for(int j = 0; j < itr.length(); j++)
-                            {
-                                user = null;
-                                user = new UserInfo(itr.getJSONObject(j).getString("FIRST_NAME"),
-                                        itr.getJSONObject(j).getString("LAST_NAME"),
-                                        itr.getJSONObject(j).getString("EMAIL"),"","","");
-                                user.setRequest(Integer.parseInt(itr.getJSONObject(j).getString("ACCEPTED")) == 0);
-                                friends.add(user);
-                            }
-                            JSONArray itr2 = response.getJSONObject(1).getJSONArray("asked");
-                            for(int j = 0; j < itr2.length(); j++)
-                            {
-                                user = null;
-                                user = new UserInfo(itr2.getJSONObject(j).getString("FIRST_NAME"),
-                                        itr2.getJSONObject(j).getString("LAST_NAME"),
-                                        itr2.getJSONObject(j).getString("EMAIL"),"","","");
-                                user.setAsked(Integer.parseInt(itr2.getJSONObject(j).getString("ACCEPTED")) == 0);
-                                friends.add(user);
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-
+                        getFriends(response, friends, false);
                         progressBar.setVisibility(View.INVISIBLE);
                         adapter.notifyDataSetChanged();
                         noFriends.setVisibility(friends.size() == 0 ? View.VISIBLE: View.INVISIBLE);
@@ -263,5 +239,35 @@ public class SeeAddFriendsActivity extends AppCompatActivity {
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         VolleyConnection.getInstance(getApplicationContext()).addToRequestQueue(req);
 
+    }
+
+    public static void getFriends(JSONArray response, ArrayList<UserInfo> friends, boolean filter) {
+        UserInfo user = null;
+        try {
+            JSONArray itr = response.getJSONObject(0).getJSONArray("request");
+            for(int j = 0; j < itr.length(); j++)
+            {
+                user = null;
+                user = new UserInfo(itr.getJSONObject(j).getString("FIRST_NAME"),
+                        itr.getJSONObject(j).getString("LAST_NAME"),
+                        itr.getJSONObject(j).getString("EMAIL"),"","","");
+                user.setRequest(Integer.parseInt(itr.getJSONObject(j).getString("ACCEPTED")) == 0);
+                if(!filter || !user.isRequest())
+                    friends.add(user);
+            }
+            JSONArray itr2 = response.getJSONObject(1).getJSONArray("asked");
+            for(int j = 0; j < itr2.length(); j++)
+            {
+                user = null;
+                user = new UserInfo(itr2.getJSONObject(j).getString("FIRST_NAME"),
+                        itr2.getJSONObject(j).getString("LAST_NAME"),
+                        itr2.getJSONObject(j).getString("EMAIL"),"","","");
+                user.setAsked(Integer.parseInt(itr2.getJSONObject(j).getString("ACCEPTED")) == 0);
+                if(!filter || !user.isAsked())
+                    friends.add(user);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 }

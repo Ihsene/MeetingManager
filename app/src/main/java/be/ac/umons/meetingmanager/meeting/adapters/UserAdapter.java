@@ -38,6 +38,8 @@ public class UserAdapter extends ArrayAdapter<UserInfo>  {
     private int resource;
     private UserInfo user;
     private Gson gson;
+    private ImageButton ok, notOK;
+    private ImageView interro;
 
     public UserAdapter(Context context, ArrayList<UserInfo> data, int resource){
         super(context, resource, data);
@@ -55,35 +57,12 @@ public class UserAdapter extends ArrayAdapter<UserInfo>  {
         gson = new GsonBuilder().excludeFieldsWithModifiers(java.lang.reflect.Modifier.TRANSIENT).create();
         TextView name = (TextView) convertView.findViewById(R.id.textViewName);
         TextView email = (TextView) convertView.findViewById(R.id.textViewEmail);
-        ImageButton ok = (ImageButton) convertView.findViewById(R.id.imageButtonOK);
-        ok.setOnClickListener(new View.OnClickListener()   {
-            public void onClick(View v)  {
-                try {
-                    handleRemoveOrAcceptFriendFromDB(user, friends.get(position), context, gson, false);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                friends.get(position).setAsked(false);
-                notifyDataSetChanged();
-            }
-        });
-        ImageButton notOK = (ImageButton) convertView.findViewById(R.id.imageButtonNotOk);
-        notOK.setOnClickListener(new View.OnClickListener()   {
-            public void onClick(View v)  {
-                try {
-                    handleRemoveOrAcceptFriendFromDB(user, friends.get(position), context, gson, true);
-                    friends.remove(position);
-                    notifyDataSetChanged();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        ImageView interro = (ImageView) convertView.findViewById(R.id.imageViewInterro);
-
         name.setText(friends.get(position).getName()+" "+friends.get(position).getFamilyName());
         if(email != null)
             email.setText(friends.get(position).getEmail());
+        ok = (ImageButton) convertView.findViewById(R.id.imageButtonOK);
+        notOK = (ImageButton) convertView.findViewById(R.id.imageButtonNotOk);
+        interro = (ImageView) convertView.findViewById(R.id.imageViewInterro);
 
         for(Integer itr : hidden)
             if(itr.equals(position))
@@ -98,6 +77,30 @@ public class UserAdapter extends ArrayAdapter<UserInfo>  {
 
         if(resource == R.layout.activity_see_add_friends_list)
         {
+
+            ok.setOnClickListener(new View.OnClickListener()   {
+                public void onClick(View v)  {
+                    try {
+                        handleRemoveOrAcceptFriendFromDB(user, friends.get(position), context, gson, false);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    friends.get(position).setAsked(false);
+                    notifyDataSetChanged();
+                }
+            });
+
+            notOK.setOnClickListener(new View.OnClickListener()   {
+                public void onClick(View v)  {
+                    try {
+                        handleRemoveOrAcceptFriendFromDB(user, friends.get(position), context, gson, true);
+                        friends.remove(position);
+                        notifyDataSetChanged();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
             if(!friends.get(position).isRequest())
                 interro.setVisibility(View.GONE);
             if(!friends.get(position).isAsked())
@@ -107,9 +110,12 @@ public class UserAdapter extends ArrayAdapter<UserInfo>  {
             }
         }else
         {
-            ok.setVisibility(View.GONE);
-            notOK.setVisibility(View.GONE);
-            interro.setVisibility(View.GONE);
+            if(ok != null)
+                ok.setVisibility(View.GONE);
+            if(notOK != null)
+                notOK.setVisibility(View.GONE);
+            if(interro != null)
+                interro.setVisibility(View.GONE);
         }
 
         if(resource == R.layout.layout_see_friends)

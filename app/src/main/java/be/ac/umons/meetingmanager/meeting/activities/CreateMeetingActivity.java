@@ -56,6 +56,7 @@ import be.ac.umons.meetingmanager.meeting.Subject;
 import be.ac.umons.meetingmanager.meeting.adapters.SubjectAdapter;
 
 import static be.ac.umons.meetingmanager.meeting.activities.MeetingManagerActivity.handleRemoveMeetingFromDB;
+import static be.ac.umons.meetingmanager.options.SeeAddFriendsActivity.getFriends;
 
 public class CreateMeetingActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener {
 
@@ -225,26 +226,14 @@ public class CreateMeetingActivity extends AppCompatActivity implements DatePick
     }
 
     public void handleGetFriends() throws JSONException {
-        friends = new ArrayList<UserInfo>();
         ArrayList<JSONObject> jsonObjects = new ArrayList<JSONObject>();
         jsonObjects.add(new JSONObject(gson.toJson(user)));
+        friends = new ArrayList<UserInfo>();
         JsonArrayRequest req = new JsonArrayRequest(Request.Method.POST,(String) getText(R.string.getFriends), new JSONArray(jsonObjects),
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
-                        UserInfo user = null;
-                        for(int i = 0; i < response.length(); i++)
-                        {
-                            try {
-                                user = new UserInfo(response.getJSONObject(i).getString("FIRST_NAME"),
-                                        response.getJSONObject(i).getString("LAST_NAME"),
-                                        response.getJSONObject(i).getString("EMAIL"),"",
-                                        "","");
-                                friends.add(user);
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                        }
+                        getFriends(response, friends, true);
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -255,7 +244,6 @@ public class CreateMeetingActivity extends AppCompatActivity implements DatePick
         req.setRetryPolicy(new DefaultRetryPolicy(0, DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         VolleyConnection.getInstance(getApplicationContext()).addToRequestQueue(req);
-
     }
 
     @Override
