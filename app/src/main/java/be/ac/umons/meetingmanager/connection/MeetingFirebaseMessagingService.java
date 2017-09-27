@@ -4,6 +4,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Vibrator;
@@ -16,6 +17,7 @@ import com.google.firebase.messaging.RemoteMessage;
 
 import be.ac.umons.meetingmanager.MainActivity;
 import be.ac.umons.meetingmanager.R;
+import be.ac.umons.meetingmanager.meeting.activities.MeetingActivity;
 
 public class MeetingFirebaseMessagingService extends FirebaseMessagingService {
 
@@ -42,6 +44,13 @@ public class MeetingFirebaseMessagingService extends FirebaseMessagingService {
             localMessage.putExtra("started", remoteMessage.getData().get("meetStarted"));
             LocalBroadcastManager.getInstance(this).sendBroadcast(localMessage);
 
+            if(remoteMessage.getData().get("modif").equals("icommingSubect"))
+            {
+                SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.setting), this.MODE_PRIVATE);
+                int delay = sharedPreferences.getInt("delaySub", 5);
+                if(Math.round(Integer.parseInt(remoteMessage.getData().get("timeLeft")) / 60000) > delay || MeetingActivity.isActive())
+                    return;
+            }
         }
 
         // Check if message contains a notification payload.

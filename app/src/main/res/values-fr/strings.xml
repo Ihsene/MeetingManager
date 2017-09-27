@@ -52,7 +52,7 @@
     <string name="leaveMeeting">Quitter la réunion ?</string>
     <string name="leaveMeetingCon">Voulez vous quitter la réunion ?</string>
     <string name="speedup">Accélérer !</string>
-    <string name="fiveminSet">Voulez vous régler le minuteur a 5 mins ?</string>
+    <string name="fiveminSet">"Voulez vous régler le minuteur a "</string>
     <string name="endofMeeting">Fin de la réunion</string>
     <string name="endofmeetingCon">Voulez vous terminer la réunion ?</string>
     <string name="editMeetingTitle">Modifier votre réunion !</string>
@@ -120,4 +120,6 @@
     <string name="update_meeting_url">http://sith-meetings.umons.ac.be:8080/updateMeeting</string>
     <string name="title_activity_see_add_friends">ActivitySeeAddFriends</string>
     <string name="search_bar">Recherche</string>
+    <string name="notif_Subject">Envoyer une notification avant le début d\'un sujet de</string>
+    <string name="minute">Minutes</string>
 </resources>

@@ -26,7 +26,7 @@ import be.ac.umons.meetingmanager.connection.VolleyConnection;
 
 public class OptionActivity extends AppCompatActivity {
 
-    private EditText firstName, familyName, delay;
+    private EditText firstName, familyName, delay, delaySub;
     private Spinner spinner;
     private SharedPreferences sharedPreferences;
     private UserInfo user;
@@ -47,6 +47,8 @@ public class OptionActivity extends AppCompatActivity {
 
         delay = (EditText) findViewById(R.id.DelayTime);
         delay.setText(String.valueOf(sharedPreferences.getInt("delay", 5)));
+        delaySub = (EditText) findViewById(R.id.DelayTimeSub);
+        delaySub.setText(String.valueOf(sharedPreferences.getInt("delaySub", 5)));
         spinner = (Spinner) findViewById(R.id.spinnerTime);
         String[] pref = new String[] {getString(R.string.minutes),getString(R.string.hours),getString(R.string.days)};
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, pref);
@@ -92,12 +94,8 @@ public class OptionActivity extends AppCompatActivity {
             }
         }
         editor.putInt("pref", spinner.getSelectedItemPosition());
-
-        switch (spinner.getSelectedItemPosition())
-        {
-
-        }
         editor.putInt("delay", Integer.parseInt(delay.getText().toString()));
+        editor.putInt("delaySub", Integer.parseInt(delaySub.getText().toString()));
         editor.commit();
     }
 }

@@ -50,7 +50,7 @@ public class MeetingActivity extends AppCompatActivity {
     private UserAdapter adapter;
     private CountDownTimer countDownTimer;
     private long reamingTime;
-    private final long FIVE_MIN = 5 * 60000;
+    private long DELAY = 5 * 60000;
     private boolean notifcationSend = false;
     private boolean isMaster = false;
     private ActivityReceiver activityReceiver;
@@ -58,6 +58,19 @@ public class MeetingActivity extends AppCompatActivity {
     private UserInfo user;
     private boolean end;
     private SharedPreferences sharedPreferences;
+    private static boolean active = false;
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        active = true;
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        active = false;
+    }
 
     @Override
     public void onBackPressed() {
@@ -114,6 +127,7 @@ public class MeetingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_meeting);
         sharedPreferences = getSharedPreferences(getString(R.string.setting), MeetingActivity.MODE_PRIVATE);
+        DELAY = sharedPreferences.getInt("delaySub", 5) * 60000;
         currentSujectIndex = 0;
         activityReceiver = new ActivityReceiver(this);
         LocalBroadcastManager.getInstance(this).registerReceiver(activityReceiver, ActivityReceiver.CURRENT_ACTIVITY_RECEIVER_FILTER);
@@ -272,14 +286,14 @@ public class MeetingActivity extends AppCompatActivity {
         }
         else
         {
-            if (reamingTime > FIVE_MIN) {
+            if (reamingTime > DELAY) {
                 AlertDialog.Builder builder = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ?
                         new AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert):
                         new AlertDialog.Builder(this);
-                builder.setTitle(R.string.speedup).setMessage(R.string.fiveminSet)
+                builder.setTitle(R.string.speedup).setMessage(getString(R.string.fiveminSet)+" "+(DELAY / 60000)+" minutes ?")
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
-                                setCount(FIVE_MIN);
+                                setCount(DELAY);
                                 try {
                                     sendMessageToAllParticipant(getString(R.string.meeting_info_url), false);
                                 } catch (JSONException e) {
@@ -359,14 +373,14 @@ public class MeetingActivity extends AppCompatActivity {
             public void onTick(long millisUntilFinished) {
                 reamingTime = millisUntilFinished;
                 updateTimer(millisUntilFinished);
-                if (reamingTime < FIVE_MIN && !notifcationSend && currentSujectIndex < meeting.getSubjects().size() - 1)
+                if(((reamingTime / 1000) % 60 == 0) && currentSujectIndex < meeting.getSubjects().size() - 1)
+                {
                     try {
-                        notifcationSend = true;
                         sendMessageToAllParticipant(getString(R.string.send_noti_sub_url), false);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-
+                }
             }
             public void onFinish() {
                 if (currentSujectIndex == meeting.getSubjects().size() - 1)
@@ -454,5 +468,13 @@ public class MeetingActivity extends AppCompatActivity {
             }
         });
         VolleyConnection.getInstance(getApplicationContext()).addToRequestQueue(req);
+    }
+
+    public static boolean isActive() {
+        return active;
+    }
+
+    public static void setActive(boolean active) {
+        MeetingActivity.active = active;
     }
 }
