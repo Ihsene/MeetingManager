@@ -98,6 +98,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             if(acct.getIdToken().equals(response.getString("token"))) {
                                 user.setName(response.getString("name"));
                                 user.setFamilyName(response.getString("familyname"));
+                                user.setPhoneNumber(response.getString("phoneNumber"));
                                 startMenuActivity();
                             }
                             else
@@ -126,6 +127,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             editor.putString(getString(R.string.accountID), user.getId());
             editor.putString(getString(R.string.accountToken), user.getToken());
             editor.putString("tokenFire", user.getTokenFire());
+            editor.putString("phoneNumber", user.getPhoneNumber());
             editor.commit();
 
         }

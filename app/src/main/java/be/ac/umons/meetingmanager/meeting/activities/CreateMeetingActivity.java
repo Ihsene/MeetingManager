@@ -196,6 +196,10 @@ public class CreateMeetingActivity extends AppCompatActivity implements DatePick
     }
 
     public  void createDialog() {
+        for(UserInfo itr : partiticipantAllMeeting)
+            for(UserInfo itr2 : friends)
+                if(itr.getEmail().equals(itr2.getEmail()))
+                    itr2.setTaken(true);
         dialog = new DialogSubjet(this, friends, meeting);
         dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
@@ -335,6 +339,7 @@ public class CreateMeetingActivity extends AppCompatActivity implements DatePick
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
+
                             Toast.makeText(CreateMeetingActivity.this, getIntent().getExtras() != null? getString(R.string.meetingEdited) : getString(R.string.meetingCreated), Toast.LENGTH_LONG).show();
                             finish();
                         }

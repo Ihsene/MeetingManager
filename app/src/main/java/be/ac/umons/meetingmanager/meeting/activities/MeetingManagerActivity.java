@@ -10,6 +10,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.telephony.SmsManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -248,18 +249,27 @@ public class MeetingManagerActivity extends AppCompatActivity {
                 }).setIcon(android.R.drawable.ic_dialog_alert).show();
     }
 
-    public static void handleRemoveMeetingFromDB(Meeting meeting, final Context c, boolean update, SharedPreferences sharedPreferences) throws JSONException {
-        UserInfo user = UserInfo.getUserInfoFromCache(c);
+    public static void handleRemoveMeetingFromDB(final Meeting meeting, final Context c, final boolean update, final SharedPreferences sharedPreferences) throws JSONException {
+        final UserInfo user = UserInfo.getUserInfoFromCache(c);
         user.setMeeting(meeting);
         meeting.setUpdate(update);
+        ArrayList<JSONObject> jsonObjects = new ArrayList<JSONObject>();
         final int id =  Integer.parseInt(meeting.getId());
         setAlarm(false, c, id, null, user.getMeeting(), sharedPreferences);
         Gson gson = new GsonBuilder().excludeFieldsWithModifiers(java.lang.reflect.Modifier.TRANSIENT).create();
-        JsonObjectRequest req = new JsonObjectRequest(Request.Method.POST,(String) c.getText(R.string.remove_meeting_url), new JSONObject(gson.toJson(user)),
-                new Response.Listener<JSONObject>() {
+        jsonObjects.add(new JSONObject(gson.toJson(user)));
+        JsonArrayRequest req = new JsonArrayRequest(Request.Method.POST,(String) c.getText(R.string.remove_meeting_url), new JSONArray(jsonObjects),
+                new Response.Listener<JSONArray>() {
                     @Override
-                    public void onResponse(JSONObject response) {
-
+                    public void onResponse(JSONArray response) {
+                        for(int i = 0; i < response.length(); i++)
+                            try {
+                                sendMessage((String)response.get(i), user.getName()+" "+user.getFamilyName()+(update?
+                                        "a modifié la réunion ":" a supprimé la réunion ")
+                                        +meeting.getTitle(), update, sharedPreferences);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -270,6 +280,14 @@ public class MeetingManagerActivity extends AppCompatActivity {
         req.setRetryPolicy(new DefaultRetryPolicy(0, DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         VolleyConnection.getInstance(c).addToRequestQueue(req);
+    }
+
+    public static void sendMessage(String number, String message, boolean update, SharedPreferences sharedPreferences) {
+        if(sharedPreferences.getBoolean("sms", false))
+        {
+            SmsManager sms = SmsManager.getDefault();
+            sms.sendTextMessage(number, null, message, null, null);
+        }
     }
 
     public void setMeetingList() throws JSONException {

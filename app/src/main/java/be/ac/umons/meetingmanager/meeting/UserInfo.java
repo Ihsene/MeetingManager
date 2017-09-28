@@ -22,6 +22,7 @@ public class UserInfo implements Parcelable {
     private Meeting meeting;
     private boolean isHere;
     private boolean request, asked;
+    private String phoneNumber;
 
     public UserInfo(String name, String familyName, String email, String id, String token, String tokenFire) {
         this.setName(name);
@@ -41,6 +42,7 @@ public class UserInfo implements Parcelable {
                 sharedPreferences.getString(c.getString(R.string.accountID),""),
                 sharedPreferences.getString(c.getString(R.string.accountToken),""),
                 sharedPreferences.getString(c.getString(R.string.tokenFire),""));
+        user.setPhoneNumber(sharedPreferences.getString("phoneNumber",""));
         return  user;
     }
 
@@ -180,5 +182,13 @@ public class UserInfo implements Parcelable {
 
     public void setAsked(boolean asked) {
         this.asked = asked;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 }
