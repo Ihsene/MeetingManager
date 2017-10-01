@@ -69,7 +69,26 @@ public class MeetingActivity extends AppCompatActivity {
     @Override
     public void onStop() {
         super.onStop();
+
         active = false;
+    }
+
+    public  void clearData() {
+        if(countDownTimer != null)
+            countDownTimer.cancel();
+        try {
+            sendPresence(false);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        if(isMaster)
+        {
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putInt("index", currentSujectIndex);
+            editor.putLong("duration", reamingTime);
+            editor.commit();
+        }
+        finish();
     }
 
     @Override
@@ -80,21 +99,7 @@ public class MeetingActivity extends AppCompatActivity {
         builder.setTitle(R.string.leaveMeeting).setMessage(R.string.leaveMeetingCon)
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        if(countDownTimer != null)
-                            countDownTimer.cancel();
-                        try {
-                            sendPresence(false);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                        if(isMaster)
-                        {
-                            SharedPreferences.Editor editor = sharedPreferences.edit();
-                            editor.putInt("index", currentSujectIndex);
-                            editor.putLong("duration", reamingTime);
-                            editor.commit();
-                        }
-                        finish();
+                        clearData();
                     }
                 })
                 .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
@@ -107,6 +112,7 @@ public class MeetingActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        clearData();
         Log.d("mmm","test on destroy");
         if(isMaster && meeting != null && currentSujectIndex == meeting.getSubjects().size() - 1 && reamingTime == 0)
         {
@@ -193,7 +199,7 @@ public class MeetingActivity extends AppCompatActivity {
         user.setHere(in);
         user.getMeeting().setCurrentIndex(currentSujectIndex);
         Gson gson  = new GsonBuilder().excludeFieldsWithModifiers(java.lang.reflect.Modifier.TRANSIENT).create();
-        JsonObjectRequest req = new JsonObjectRequest(Request.Method.POST, "http://sith-meetings.umons.ac.be:8080/sendPresence", new JSONObject(gson.toJson(user)),
+        JsonObjectRequest req = new JsonObjectRequest(Request.Method.POST, "https://sith-meetings.umons.ac.be:8080/sendPresence", new JSONObject(gson.toJson(user)),
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {

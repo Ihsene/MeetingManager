@@ -18,19 +18,18 @@ import com.google.firebase.messaging.RemoteMessage;
 import be.ac.umons.meetingmanager.MainActivity;
 import be.ac.umons.meetingmanager.R;
 import be.ac.umons.meetingmanager.meeting.activities.MeetingActivity;
+import be.ac.umons.meetingmanager.meeting.activities.MeetingManagerActivity;
+import be.ac.umons.meetingmanager.options.SeeAddFriendsActivity;
 
 public class MeetingFirebaseMessagingService extends FirebaseMessagingService {
 
     private static final String TAG = "FirebaseMsgService";
 
     public void onMessageReceived(RemoteMessage remoteMessage) {
-        // ...
 
-        // TODO(developer): Handle FCM messages here.
-        // Not getting messages here? See why this may be: https://goo.gl/39bRNJ
         Log.d(TAG, "From: " + remoteMessage.getFrom());
-
         // Check if message contains a data payload.
+        Intent intent = null;
         if (remoteMessage.getData().size() > 0) {
             Log.d(TAG, "Message data payload: " + remoteMessage.getData());
 
@@ -44,27 +43,51 @@ public class MeetingFirebaseMessagingService extends FirebaseMessagingService {
             localMessage.putExtra("started", remoteMessage.getData().get("meetStarted"));
             LocalBroadcastManager.getInstance(this).sendBroadcast(localMessage);
 
-            if(remoteMessage.getData().get("modif").equals("icommingSubect"))
+            switch (remoteMessage.getData().get("modif"))
             {
-                SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.setting), this.MODE_PRIVATE);
-                int delay = sharedPreferences.getInt("delaySub", 5);
-                if(Math.round(Integer.parseInt(remoteMessage.getData().get("timeLeft")) / 60000) > delay || MeetingActivity.isActive())
-                    return;
+                case "icommingSubect":
+                    SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.setting), this.MODE_PRIVATE);
+                    int delay = sharedPreferences.getInt("delaySub", 5);
+                    if(Math.round(Integer.parseInt(remoteMessage.getData().get("timeLeft")) / 60000) > delay || MeetingActivity.isActive())
+                        return;
+                    else
+                    {
+                        intent = new Intent(this, MeetingManagerActivity.class);
+                        intent.putExtra("join", true);
+                    }
+                    break;
+                case "removeMeeting":
+                case "newMeeting":
+                    intent = new Intent(this, MeetingManagerActivity.class);
+                    if(remoteMessage.getData().get("join") != null && remoteMessage.getData().get("join").equals("true"))
+                        intent.putExtra("join", true);
+                    break;
+                case "acceptedFriend":
+                case "removeFriend":
+                case "newFriend":
+                    intent = new Intent(this, SeeAddFriendsActivity.class);
+                    break;
+            }
+
+            if(intent != null)
+            {
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                sendNotification(remoteMessage.getData().get("info"), intent);
             }
         }
 
         // Check if message contains a notification payload.
-        if (remoteMessage.getNotification() != null) {
+        if (remoteMessage.getNotification() != null && intent == null) {
             Log.d(TAG, "Message Notification Body: " + remoteMessage.getNotification().getBody());
-            sendNotification(remoteMessage.getNotification().getBody());
+            intent = new Intent(this, MainActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            sendNotification(remoteMessage.getNotification().getBody(), intent);
         }
     }
 
-    private void sendNotification(String messageBody) {
+    private void sendNotification(String messageBody, Intent intent) {
         Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         v.vibrate(500);
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
                 PendingIntent.FLAG_ONE_SHOT);
 

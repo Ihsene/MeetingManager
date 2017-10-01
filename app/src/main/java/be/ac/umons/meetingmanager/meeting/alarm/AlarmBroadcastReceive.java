@@ -13,6 +13,7 @@ import android.util.Log;
 
 import be.ac.umons.meetingmanager.MainActivity;
 import be.ac.umons.meetingmanager.R;
+import be.ac.umons.meetingmanager.meeting.activities.MeetingManagerActivity;
 
 /**
  * Created by SogeP on 12-08-17.
@@ -25,7 +26,8 @@ public class AlarmBroadcastReceive extends BroadcastReceiver {
         String m = intent.getStringExtra("meeting");
         Vibrator v = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
         v.vibrate(500);
-        Intent intent2 = new Intent(context, MainActivity.class);
+        Intent intent2 = new Intent(context, MeetingManagerActivity.class);
+        intent.putExtra("join", true);
         intent2.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0 /* Request code */, intent2,
                 PendingIntent.FLAG_ONE_SHOT);
